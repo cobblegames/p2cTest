@@ -152,6 +152,7 @@ GameObject:
   - component: {fileID: 1203985933040136911}
   - component: {fileID: 3243101859088367631}
   - component: {fileID: 8216562455621744192}
+  - component: {fileID: 5884606542863433914}
   m_Layer: 0
   m_Name: Camera_Arm
   m_TagString: Untagged
@@ -251,3 +252,29 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &5884606542863433914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3951902645584760484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f113a6856f95caf469c0ca47e0f904e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 30
+  rotationAngle: 90
+  detectionRange: 10
+  detectionAngle: 60
+  detectionMask:
+    serializedVersion: 2
+    m_Bits: 8
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 128
+  showGizmos: 1
+  detectionColor: {r: 1, g: 0, b: 0, a: 1}
+  idleColor: {r: 0, g: 1, b: 0, a: 1}
+  gizmoHeight: 0.5
