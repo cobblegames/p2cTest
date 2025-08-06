@@ -2,12 +2,12 @@ using UnityEngine;
 
 public static class GameEvents 
 {
-    public delegate void PLAYER_DETECTED(bool isDetected, int cameraID);
+    public delegate void PLAYER_DETECTED(bool isDetected);
     public static event PLAYER_DETECTED OnPlayerDetected;
-    public static void PostOnPlayerDetected(bool isDetected, int cameraID)
+    public static void PostOnPlayerDetected(bool isDetected)
     {
         if (OnPlayerDetected != null)
-            OnPlayerDetected(isDetected, cameraID);
+            OnPlayerDetected(isDetected);
     }
 
 

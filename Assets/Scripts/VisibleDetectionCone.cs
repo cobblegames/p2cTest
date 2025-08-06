@@ -7,18 +7,13 @@ public enum PlayerStatus {NotDetected = 0, Detected = 1}
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class VisibleDetectionCone : MonoBehaviour
 {
-    [Header("Camera Settings")]
-    [SerializeField] private CameraDetectionSystem cameraDetector;
-    [SerializeField] private float detectionRange = 10f;
-    [SerializeField][Range(1, 179)] private float detectionAngle = 60f;
-    [SerializeField] private LayerMask obstacleMask;
+
     [SerializeField] private int rayCount = 30;
+    DetectorsData detectorsData;
 
     [Header("Visual Settings")]
     [SerializeField] private Material coneMaterial;
-    [SerializeField] private Color detectionColor = new Color(1, 0, 0, 0.3f);
-    [SerializeField] private Color idleColor = new Color(1, 1, 0, 0.3f);
- 
+
     [SerializeField] private bool drawBase = true;
 
     private Mesh mesh;
@@ -26,8 +21,9 @@ public class VisibleDetectionCone : MonoBehaviour
     private int[] triangles;
 
 
-    public void InitCone()
+    public void InitCone(DetectorsData data)
     {
+        detectorsData = data;
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         GetComponent<MeshRenderer>().material = coneMaterial;
@@ -62,19 +58,19 @@ public class VisibleDetectionCone : MonoBehaviour
         {
             float angle = 2 * Mathf.PI * i / rayCount;
             Vector3 localDirection = Quaternion.Euler(
-                Mathf.Sin(angle) * detectionAngle * 0.5f,
-                Mathf.Cos(angle) * detectionAngle * 0.5f,
+                Mathf.Sin(angle) * detectorsData.DetectionAngle * 0.5f,
+                Mathf.Cos(angle) * detectorsData.DetectionAngle * 0.5f,
                 0) * Vector3.forward;
 
             Vector3 worldDirection = transform.TransformDirection(localDirection);
 
-            if (Physics.Raycast(transform.position, worldDirection, out RaycastHit hit, detectionRange, obstacleMask))
+            if (Physics.Raycast(transform.position, worldDirection, out RaycastHit hit, detectorsData.DetectionRange, detectorsData.ObstacleMask))
             {
                 vertices[1 + i] = transform.InverseTransformPoint(hit.point);
             }
             else
             {
-                vertices[1 + i] = localDirection * detectionRange;
+                vertices[1 + i] = localDirection * detectorsData.DetectionRange;
             }
         }
 
@@ -87,7 +83,7 @@ public class VisibleDetectionCone : MonoBehaviour
             }
 
             // Last vertex = base center (index 2*rayCount+1)
-            vertices[2 * rayCount + 1] = Vector3.forward * detectionRange;
+            vertices[2 * rayCount + 1] = Vector3.forward * detectorsData.DetectionRange;
         }
 
         // Generate wall triangles
@@ -126,12 +122,9 @@ public class VisibleDetectionCone : MonoBehaviour
 
     public void UpdateConeColor(PlayerStatus status)
     {
-        Color color = status == PlayerStatus.Detected ? detectionColor : idleColor;
-
-        if (coneMaterial != null)
-        {
-            coneMaterial.color = color;
-        }
+        Color color = status == PlayerStatus.Detected ? detectorsData.DetectionColor : detectorsData.IdleColor;
+        GetComponent<MeshRenderer>().material.color = color;
+           
     }
 
    

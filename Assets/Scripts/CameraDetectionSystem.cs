@@ -3,19 +3,16 @@ using UnityEngine;
 public class CameraDetectionSystem : MonoBehaviour
 {
     [Header("Camera Settings")]
-    [SerializeField] private float rotationSpeed = 30f;
-    [SerializeField] private float rotationAngle = 90f; // Total rotation angle (half to each side)
-    [SerializeField] private float detectionRange = 10f;
-    [SerializeField] private float detectionAngle = 60f;
-    [SerializeField] private LayerMask detectionMask;
-    [SerializeField] private LayerMask obstructionMask;
+    [SerializeField] DetectorsData detectorsData;
+
+
+
 
     [SerializeField] VisibleDetectionCone detectionCone;
 
     [Header("Gizmos Settings")]
     [SerializeField] private bool showGizmos = true;
-    [SerializeField] private Color detectionColor = Color.red;
-    [SerializeField] private Color idleColor = Color.green;
+
     [SerializeField] private float gizmoHeight = 0.5f;
 
     private float initialLocalYRotation;
@@ -25,7 +22,9 @@ public class CameraDetectionSystem : MonoBehaviour
     private bool rotatingRight = true;
     private bool playerDetected = false;
     private Transform playerTransform;
+
     [SerializeField] int cameraID;
+    [SerializeField] AudioSource audioSource;
     private void Start()
     {
         // Store initial LOCAL y rotation
@@ -33,10 +32,10 @@ public class CameraDetectionSystem : MonoBehaviour
         currentLocalRotation = initialLocalYRotation;
 
         // Calculate min and max LOCAL rotation angles
-        minLocalRotation = initialLocalYRotation - rotationAngle / 2f;
-        maxLocalRotation = initialLocalYRotation + rotationAngle / 2f;
+        minLocalRotation = initialLocalYRotation - detectorsData.RotationAngle / 2f;
+        maxLocalRotation = initialLocalYRotation + detectorsData.RotationAngle / 2f;
 
-        detectionCone.InitCone();
+        detectionCone.InitCone(detectorsData);
     }
 
     private void Update()
@@ -48,7 +47,7 @@ public class CameraDetectionSystem : MonoBehaviour
     private void RotateCamera()
     {
         if(playerDetected) return; // Skip rotation if player is detected
-        float rotationStep = rotationSpeed * Time.deltaTime;
+        float rotationStep = detectorsData.RotationSpeed * Time.deltaTime;
 
         if (rotatingRight)
         {
@@ -85,7 +84,7 @@ public class CameraDetectionSystem : MonoBehaviour
 
     private void CheckForPlayer()
     {
-        Collider[] rangeChecks = Physics.OverlapSphere(transform.position, detectionRange, detectionMask);
+        Collider[] rangeChecks = Physics.OverlapSphere(transform.position, detectorsData.DetectionRange, detectorsData.DetectionMask);
 
         if (rangeChecks.Length > 0)
         {
@@ -93,23 +92,29 @@ public class CameraDetectionSystem : MonoBehaviour
             Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
             float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
 
-            if (angleToPlayer < detectionAngle / 2)
+            if (angleToPlayer < detectorsData.DetectionAngle / 2)
             {
                 float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
 
-                if (!Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstructionMask))
+                if (!Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, detectorsData.ObstacleMask))
                 {
                     playerDetected = true;
                     Debug.Log("Player detected by camera!");
 
-                    GameEvents.PostOnPlayerDetected(true, cameraID);
+                    GameEvents.PostOnPlayerDetected(true);
                     detectionCone.UpdateConeColor(PlayerStatus.Detected);
+                    if (!audioSource.isPlaying)
+                        audioSource.Play();
                     return;
                 }
             }
         }
-        GameEvents.PostOnPlayerDetected(false, cameraID);
+        GameEvents.PostOnPlayerDetected(false);
         detectionCone.UpdateConeColor(PlayerStatus.NotDetected);
+        if (audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
         playerDetected = false;
     }
 
@@ -117,15 +122,15 @@ public class CameraDetectionSystem : MonoBehaviour
     {
         if (!showGizmos) return;
 
-        Gizmos.color = playerDetected ? detectionColor : idleColor;
+        Gizmos.color = playerDetected ? detectorsData.DetectionColor : detectorsData.IdleColor;
 
         // Draw detection range sphere
-        Gizmos.DrawWireSphere(transform.position, detectionRange);
+        Gizmos.DrawWireSphere(transform.position, detectorsData.DetectionRange);
 
         // Draw detection cone
-        Vector3 forward = transform.forward * detectionRange;
-        Vector3 left = Quaternion.Euler(0, -detectionAngle / 2, 0) * forward;
-        Vector3 right = Quaternion.Euler(0, detectionAngle / 2, 0) * forward;
+        Vector3 forward = transform.forward * detectorsData.DetectionRange;
+        Vector3 left = Quaternion.Euler(0, -detectorsData.DetectionAngle / 2, 0) * forward;
+        Vector3 right = Quaternion.Euler(0, detectorsData.DetectionAngle / 2, 0) * forward;
 
         Vector3 gizmoPos = transform.position + Vector3.up * gizmoHeight;
 
@@ -134,12 +139,12 @@ public class CameraDetectionSystem : MonoBehaviour
 
         // Draw connecting lines to visualize the cone
         int segments = 10;
-        float angleStep = detectionAngle / segments;
+        float angleStep = detectorsData.DetectionAngle / segments;
         Vector3 prevPoint = gizmoPos + left;
 
         for (int i = 1; i <= segments; i++)
         {
-            float angle = -detectionAngle / 2 + angleStep * i;
+            float angle = -detectorsData.DetectionAngle / 2 + angleStep * i;
             Vector3 nextPoint = gizmoPos + Quaternion.Euler(0, angle, 0) * forward;
             Gizmos.DrawLine(prevPoint, nextPoint);
             prevPoint = nextPoint;
@@ -156,13 +161,13 @@ public class CameraDetectionSystem : MonoBehaviour
         if (!Application.isPlaying) return;
 
         Gizmos.color = Color.blue;
-        Vector3 centerDirection = Quaternion.Euler(0, initialLocalYRotation, 0) * Vector3.forward * detectionRange;
+        Vector3 centerDirection = Quaternion.Euler(0, initialLocalYRotation, 0) * Vector3.forward * detectorsData.DetectionRange;
         Gizmos.DrawRay(transform.position + Vector3.up * gizmoHeight, transform.parent != null ?
             transform.parent.rotation * centerDirection : centerDirection);
 
         Gizmos.color = Color.cyan;
-        Vector3 minDirection = Quaternion.Euler(0, minLocalRotation, 0) * Vector3.forward * detectionRange;
-        Vector3 maxDirection = Quaternion.Euler(0, maxLocalRotation, 0) * Vector3.forward * detectionRange;
+        Vector3 minDirection = Quaternion.Euler(0, minLocalRotation, 0) * Vector3.forward * detectorsData.DetectionRange;
+        Vector3 maxDirection = Quaternion.Euler(0, maxLocalRotation, 0) * Vector3.forward * detectorsData.DetectionRange;
         Gizmos.DrawRay(transform.position + Vector3.up * gizmoHeight, transform.parent != null ?
             transform.parent.rotation * minDirection : minDirection);
         Gizmos.DrawRay(transform.position + Vector3.up * gizmoHeight, transform.parent != null ?
