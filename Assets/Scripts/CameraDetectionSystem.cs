@@ -10,6 +10,8 @@ public class CameraDetectionSystem : MonoBehaviour
     [SerializeField] private LayerMask detectionMask;
     [SerializeField] private LayerMask obstructionMask;
 
+    [SerializeField] VisibleDetectionCone detectionCone;
+
     [Header("Gizmos Settings")]
     [SerializeField] private bool showGizmos = true;
     [SerializeField] private Color detectionColor = Color.red;
@@ -23,7 +25,7 @@ public class CameraDetectionSystem : MonoBehaviour
     private bool rotatingRight = true;
     private bool playerDetected = false;
     private Transform playerTransform;
-
+    [SerializeField] int cameraID;
     private void Start()
     {
         // Store initial LOCAL y rotation
@@ -33,6 +35,8 @@ public class CameraDetectionSystem : MonoBehaviour
         // Calculate min and max LOCAL rotation angles
         minLocalRotation = initialLocalYRotation - rotationAngle / 2f;
         maxLocalRotation = initialLocalYRotation + rotationAngle / 2f;
+
+        detectionCone.InitCone();
     }
 
     private void Update()
@@ -43,6 +47,7 @@ public class CameraDetectionSystem : MonoBehaviour
 
     private void RotateCamera()
     {
+        if(playerDetected) return; // Skip rotation if player is detected
         float rotationStep = rotationSpeed * Time.deltaTime;
 
         if (rotatingRight)
@@ -72,6 +77,10 @@ public class CameraDetectionSystem : MonoBehaviour
             currentLocalRotation,
             transform.localEulerAngles.z
         );
+
+        detectionCone.transform.position = transform.position;
+        detectionCone.transform.rotation = transform.rotation;
+        detectionCone.GenerateCompleteCone();
     }
 
     private void CheckForPlayer()
@@ -92,11 +101,15 @@ public class CameraDetectionSystem : MonoBehaviour
                 {
                     playerDetected = true;
                     Debug.Log("Player detected by camera!");
+
+                    GameEvents.PostOnPlayerDetected(true, cameraID);
+                    detectionCone.UpdateConeColor(PlayerStatus.Detected);
                     return;
                 }
             }
         }
-
+        GameEvents.PostOnPlayerDetected(false, cameraID);
+        detectionCone.UpdateConeColor(PlayerStatus.NotDetected);
         playerDetected = false;
     }
 
