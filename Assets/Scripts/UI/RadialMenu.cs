@@ -6,32 +6,53 @@ public class RadialMenu : MonoBehaviour
 {
     [Header("Settings")]
     public float radius = 200f;
+
     public float segmentThickness = 50f;
-    public KeyCode activationKey = KeyCode.Q;
+
+    //  public KeyCode activationKey = KeyCode.Q;
     public Color normalColor = new Color(0.2f, 0.2f, 0.2f, 0.8f);
+
     public Color highlightColor = new Color(0.4f, 0.4f, 0.8f, 0.8f);
     public Color textColor = Color.white;
     public int textFontSize = 20;
 
     [Header("References")]
     public Transform segmentContainer;
+
     public Transform centerPoint;
     public Text selectionText;
 
-    [SerializeField] GameObject menuRoot;
+    [SerializeField] private GameObject menuRoot;
 
     private List<RadialMenuSegment> segments = new List<RadialMenuSegment>();
     private bool isActive = false;
     private int currentSelection = -1;
 
- 
-    
-    
     [System.Serializable]
     public class MenuAction
     {
         public string name;
         public System.Action action;
+    }
+
+    private void OnEnable()
+    {
+        InputManager.Instance.OnShowRadialMenu += ActivateMenu;
+        InputManager.Instance.OnHideRadialMenu += DeactivateMenu;
+        InputManager.Instance.OnUseAction += ExecuteAction;
+        InputManager.Instance.OnLook += HandleSelection;
+    }
+
+    private void OnDisable()
+    {
+        if (InputManager.Instance)
+        {
+            InputManager.Instance.OnShowRadialMenu -= ActivateMenu;
+            InputManager.Instance.OnHideRadialMenu -= DeactivateMenu;
+            InputManager.Instance.OnUseAction -= ExecuteAction;
+            InputManager.Instance.OnLook -= HandleSelection;
+
+        }
     }
 
     public void CreateMenu(List<MenuAction> actions)
@@ -97,9 +118,6 @@ public class RadialMenu : MonoBehaviour
         }
     }
 
-
-
-
     public void ClearMenu()
     {
         foreach (Transform child in segmentContainer)
@@ -109,53 +127,40 @@ public class RadialMenu : MonoBehaviour
         segments.Clear();
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(activationKey))
-        {
-            ActivateMenu();
-        }
-
-        if (Input.GetKeyUp(activationKey))
-        {
-            DeactivateMenu(true);
-        }
-
-        if (isActive)
-        {
-            HandleSelection();
-        }
-    }
     private void ActivateMenu()
     {
         isActive = true;
         menuRoot.SetActive(true);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
-
-      
     }
 
-    private void DeactivateMenu(bool executeAction)
+    private void ExecuteAction()
+    {
+        if (currentSelection >= 0 && currentSelection < segments.Count)
+        {
+            segments[currentSelection].ExecuteAction();
+        }
+    }
+
+    private void DeactivateMenu()
     {
         isActive = false;
         menuRoot.SetActive(false);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.None;
-
-
-        if (executeAction && currentSelection >= 0 && currentSelection < segments.Count)
-        {
-            segments[currentSelection].ExecuteAction();
-        }
-
         currentSelection = -1;
         UpdateSelectionDisplay();
     }
 
-    private void HandleSelection()
+    private void HandleSelection(Vector2 cursorPosition)
     {
-        Vector2 mousePosition = Input.mousePosition;
+        if (!isActive || segments.Count == 0)
+        {
+            return;
+        }
+
+        Vector2 mousePosition = cursorPosition;
         Vector2 centerPosition = centerPoint.position;
         Vector2 direction = (mousePosition - centerPosition).normalized;
 
@@ -184,7 +189,6 @@ public class RadialMenu : MonoBehaviour
     {
         if (currentSelection < 0 || currentSelection >= segments.Count)
         {
-           
             return;
         }
 
@@ -195,10 +199,6 @@ public class RadialMenu : MonoBehaviour
         // Calculate line properties
         float distance = segmentCenter.magnitude;
         float angle = Mathf.Atan2(segmentCenter.y, segmentCenter.x) * Mathf.Rad2Deg;
-
-      
-
-      
     }
 
     private Vector3 GetSegmentCenter(Transform segment)
@@ -215,6 +215,7 @@ public class RadialMenu : MonoBehaviour
             0
         );
     }
+
     private void UpdateSelectionDisplay()
     {
         if (selectionText != null)

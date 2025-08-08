@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Windows;
 
 [RequireComponent(typeof(CharacterController))]
 public class SimpleCharacterController : MonoBehaviour
@@ -10,12 +11,33 @@ public class SimpleCharacterController : MonoBehaviour
 
     [Header("Mouse Look")]
     public Transform cameraTransform;
-    public float mouseSensitivity = 100f;
+
     private float xRotation = 0f;
 
     private CharacterController controller;
     private Vector3 velocity;
     private bool isGrounded;
+
+    Vector2 moveInput;
+
+    private void OnEnable()
+    {
+        InputManager.Instance.OnLook += HandleLook;
+        InputManager.Instance.OnMove += HandleMovement;
+        InputManager.Instance.OnJump += HandleJump;
+    }
+
+    private void OnDisable()
+    {
+        if (InputManager.Instance)
+        {
+            InputManager.Instance.OnLook -= HandleLook;
+            InputManager.Instance.OnMove -= HandleMovement;
+            InputManager.Instance.OnJump -= HandleJump;
+        }
+  
+        
+    }
 
     void Start()
     {
@@ -28,16 +50,12 @@ public class SimpleCharacterController : MonoBehaviour
         Cursor.visible = false;
     }
 
-    void Update()
-    {
-        HandleLook();
-        HandleMovement();
-    }
 
-    void HandleLook()
+
+    void HandleLook(Vector2 _input)
     {
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        float mouseX = _input.x *  Time.deltaTime;
+        float mouseY = _input.y *  Time.deltaTime;
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
@@ -46,22 +64,34 @@ public class SimpleCharacterController : MonoBehaviour
         transform.Rotate(Vector3.up * mouseX);
     }
 
-    void HandleMovement()
+    private void Update()
     {
         isGrounded = controller.isGrounded;
         if (isGrounded && velocity.y < 0)
             velocity.y = -2f;
 
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        float x = moveInput.x;
+        float z = moveInput.y;
 
         Vector3 move = transform.right * x + transform.forward * z;
         controller.Move(move * moveSpeed * Time.deltaTime);
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    void HandleMovement(Vector2 _input)
+    {
+        moveInput = _input;
+
+    }
+
+    void HandleJump()
+    {
+        if (isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
     }
 }

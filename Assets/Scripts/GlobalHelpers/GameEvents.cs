@@ -19,6 +19,16 @@ public static class GameEvents
             OnGameStart();
     }
 
+    public delegate void INTERACT_ACTION();
+    public static event INTERACT_ACTION OnTryInteract;
+    public static void PostOnTryInteract()
+    {
+        if (OnTryInteract != null)
+            OnTryInteract();
+    }
+
+   
+
 
 
 }

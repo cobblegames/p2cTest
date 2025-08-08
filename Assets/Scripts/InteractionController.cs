@@ -2,17 +2,18 @@ using UnityEngine;
 
 public class InteractionController : MonoBehaviour
 {
-    public float interactionDistance = 3f;
-    public KeyCode interactKey = KeyCode.E;
+    public float interactionDistance = 3f;   
     public LayerMask interactionLayer;
     public Camera playerCamera;
 
-    private void Update()
+    private void OnEnable()
     {
-        if (Input.GetKeyDown(interactKey))
-        {
-            TryInteract();
-        }
+       GameEvents.OnTryInteract += TryInteract;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnTryInteract -= TryInteract;
     }
 
     private void TryInteract()

@@ -26,7 +26,11 @@ public class RadialMenuImplementation : MonoBehaviour
             {
                 name = "Use",
                
-                action = () => Debug.Log("Use Item action!")
+                action = () => 
+                {
+                    Debug.Log("Use Item action!");
+                    GameEvents.PostOnTryInteract();
+                }
             },
          
         };
