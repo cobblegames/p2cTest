@@ -2,12 +2,14 @@ using UnityEngine;
 using UnityEngine.Windows;
 
 [RequireComponent(typeof(CharacterController))]
-public class SimpleCharacterController : MonoBehaviour
+public class PlayerMovementController : MonoBehaviour
 {
-    [Header("Movement")]
-    public float moveSpeed = 5f;
-    public float jumpHeight = 1.5f;
-    public float gravity = -9.81f;
+
+    [SerializeField] PlayerData playerData;
+
+    //public float moveSpeed = 5f;
+    //public float jumpHeight = 1.5f;
+    //public float gravity = -9.81f;
 
     [Header("Mouse Look")]
     public Transform cameraTransform;
@@ -17,7 +19,7 @@ public class SimpleCharacterController : MonoBehaviour
     private CharacterController controller;
     private Vector3 velocity;
     private bool isGrounded;
-
+    private bool lockMovement = false;  
     Vector2 moveInput;
 
     private void OnEnable()
@@ -25,6 +27,8 @@ public class SimpleCharacterController : MonoBehaviour
         InputManager.Instance.OnLook += HandleLook;
         InputManager.Instance.OnMove += HandleMovement;
         InputManager.Instance.OnJump += HandleJump;
+        InputManager.Instance.OnShowRadialMenu += () => lockMovement = true;
+        InputManager.Instance.OnHideRadialMenu += () => lockMovement = false;
     }
 
     private void OnDisable()
@@ -34,6 +38,8 @@ public class SimpleCharacterController : MonoBehaviour
             InputManager.Instance.OnLook -= HandleLook;
             InputManager.Instance.OnMove -= HandleMovement;
             InputManager.Instance.OnJump -= HandleJump;
+            InputManager.Instance.OnShowRadialMenu -= () => lockMovement = true;
+            InputManager.Instance.OnHideRadialMenu -= () => lockMovement = false;
         }
   
         
@@ -54,6 +60,9 @@ public class SimpleCharacterController : MonoBehaviour
 
     void HandleLook(Vector2 _input)
     {
+        if (lockMovement)
+            return;
+
         float mouseX = _input.x *  Time.deltaTime;
         float mouseY = _input.y *  Time.deltaTime;
 
@@ -73,25 +82,30 @@ public class SimpleCharacterController : MonoBehaviour
         float x = moveInput.x;
         float z = moveInput.y;
 
+        if (lockMovement)
+        {
+            x = 0f;
+            z = 0f;
+        }
+
         Vector3 move = transform.right * x + transform.forward * z;
-        controller.Move(move * moveSpeed * Time.deltaTime);
+        controller.Move(move * playerData.MoveSpeed * Time.deltaTime);
 
 
-        velocity.y += gravity * Time.deltaTime;
+        velocity.y += playerData.Gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
 
     void HandleMovement(Vector2 _input)
     {
         moveInput = _input;
-
     }
 
     void HandleJump()
     {
         if (isGrounded)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            velocity.y = Mathf.Sqrt(playerData.JumpHeight * -2f * playerData.Gravity);
         }
     }
 }

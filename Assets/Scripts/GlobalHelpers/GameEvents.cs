@@ -1,9 +1,10 @@
+using System;
 using UnityEngine;
 
 public static class GameEvents 
 {
-    public delegate void PLAYER_DETECTED(bool isDetected);
-    public static event PLAYER_DETECTED OnPlayerDetected;
+  
+    public static event System.Action<bool> OnPlayerDetected;
     public static void PostOnPlayerDetected(bool isDetected)
     {
         if (OnPlayerDetected != null)
@@ -11,20 +12,20 @@ public static class GameEvents
     }
 
 
-    public delegate void GAME_START();
-    public static event GAME_START OnGameStart;
+    
+    public static event System.Action OnGameStart;
     public static void PostOnGameStart()
     {
         if (OnGameStart != null)
             OnGameStart();
     }
 
-    public delegate void INTERACT_ACTION();
-    public static event INTERACT_ACTION OnTryInteract;
-    public static void PostOnTryInteract()
+    
+    public static event System.Action<PlayerAction> OnChangePlayerAction;
+    public static void PostOnChangePlayerAction(PlayerAction action)
     {
-        if (OnTryInteract != null)
-            OnTryInteract();
+        if (OnChangePlayerAction != null)
+            OnChangePlayerAction(action);
     }
 
    

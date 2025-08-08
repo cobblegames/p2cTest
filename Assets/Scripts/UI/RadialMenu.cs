@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class RadialMenu : MonoBehaviour
 {
+ 
     [Header("Settings")]
     public float radius = 200f;
 
@@ -39,7 +40,7 @@ public class RadialMenu : MonoBehaviour
     {
         InputManager.Instance.OnShowRadialMenu += ActivateMenu;
         InputManager.Instance.OnHideRadialMenu += DeactivateMenu;
-        InputManager.Instance.OnUseAction += ExecuteAction;
+    
         InputManager.Instance.OnLook += HandleSelection;
     }
 
@@ -49,7 +50,7 @@ public class RadialMenu : MonoBehaviour
         {
             InputManager.Instance.OnShowRadialMenu -= ActivateMenu;
             InputManager.Instance.OnHideRadialMenu -= DeactivateMenu;
-            InputManager.Instance.OnUseAction -= ExecuteAction;
+          
             InputManager.Instance.OnLook -= HandleSelection;
 
         }
@@ -129,6 +130,7 @@ public class RadialMenu : MonoBehaviour
 
     private void ActivateMenu()
     {
+        Debug.Log("Activating Radial Menu");
         isActive = true;
         menuRoot.SetActive(true);
         Cursor.visible = true;
@@ -151,6 +153,7 @@ public class RadialMenu : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         currentSelection = -1;
         UpdateSelectionDisplay();
+        ExecuteAction();
     }
 
     private void HandleSelection(Vector2 cursorPosition)
@@ -225,20 +228,20 @@ public class RadialMenu : MonoBehaviour
         }
     }
 
-    public void HighlightSegment(int index)
-    {
-        if (currentSelection >= 0 && currentSelection < segments.Count)
-        {
-            segments[currentSelection].SetHighlight(false);
-        }
+    //public void HighlightSegment(int index)
+    //{
+    //    if (currentSelection >= 0 && currentSelection < segments.Count)
+    //    {
+    //        segments[currentSelection].SetHighlight(false);
+    //    }
 
-        currentSelection = index;
+    //    currentSelection = index;
 
-        if (currentSelection >= 0 && currentSelection < segments.Count)
-        {
-            segments[currentSelection].SetHighlight(true);
-        }
+    //    if (currentSelection >= 0 && currentSelection < segments.Count)
+    //    {
+    //        segments[currentSelection].SetHighlight(true);
+    //    }
 
-        UpdateSelectionDisplay();
-    }
+    //    UpdateSelectionDisplay();
+    //}
 }

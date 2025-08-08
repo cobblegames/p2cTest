@@ -4993,8 +4993,8 @@ GameObject:
   - component: {fileID: 891530302}
   - component: {fileID: 891530306}
   - component: {fileID: 891530305}
+  - component: {fileID: 891530309}
   - component: {fileID: 891530308}
-  - component: {fileID: 891530307}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -5068,6 +5068,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 927305765}
   - {fileID: 1536079701}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5083,9 +5084,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62cafbd36a8126f4696e0da9feff3380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 10
-  jumpHeight: 1.5
-  gravity: -9.81
+  playerData: {fileID: 11400000, guid: 83cf95a155a29294b86b80af2e075c9a, type: 2}
   cameraTransform: {fileID: 1536079701}
 --- !u!143 &891530306
 CharacterController:
@@ -5112,19 +5111,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &891530307
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 891530300}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7bfbb9d93a7ae45a3d24cc6a47f5fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  radialMenu: {fileID: 891530308}
 --- !u!114 &891530308
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5147,6 +5133,26 @@ MonoBehaviour:
   centerPoint: {fileID: 717776145}
   selectionText: {fileID: 1187979388}
   menuRoot: {fileID: 1174229950}
+--- !u!114 &891530309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 891530300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3574613be5c91a42aefc3127a19ea06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movement: {fileID: 891530305}
+  currentPlayerAction: 0
+  radialMenu: {fileID: 891530308}
+  menuActions:
+  - {fileID: 11400000, guid: 075dd05be41140c42a2699f2f59a1015, type: 2}
+  - {fileID: 11400000, guid: 2145ca11fb037014e9a8a95a55fcf428, type: 2}
+  - {fileID: 11400000, guid: ff4f8961f631cbd45bb180015a36ff92, type: 2}
+  interactionController: {fileID: 927305764}
 --- !u!1 &900779707
 GameObject:
   m_ObjectHideFlags: 0
@@ -5302,7 +5308,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 891530304}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &940973141
 GameObject:
@@ -10517,5 +10523,4 @@ SceneRoots:
   - {fileID: 2070456876}
   - {fileID: 1894310893}
   - {fileID: 709322378}
-  - {fileID: 927305765}
   - {fileID: 2123601140}

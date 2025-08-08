@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 
 
-public enum PlayerStatus {NotDetected = 0, Detected = 1}
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class VisibleDetectionCone : MonoBehaviour
@@ -28,7 +27,7 @@ public class VisibleDetectionCone : MonoBehaviour
         GetComponent<MeshFilter>().mesh = mesh;
         GetComponent<MeshRenderer>().material = coneMaterial;
         GenerateCompleteCone();
-        UpdateConeColor(PlayerStatus.NotDetected);
+        UpdateConeColor(PlayerAlarmStatus.NotDetected);
     }
     
 
@@ -120,9 +119,9 @@ public class VisibleDetectionCone : MonoBehaviour
 
 
 
-    public void UpdateConeColor(PlayerStatus status)
+    public void UpdateConeColor(PlayerAlarmStatus status)
     {
-        Color color = status == PlayerStatus.Detected ? detectorsData.DetectionColor : detectorsData.IdleColor;
+        Color color = status == PlayerAlarmStatus.Detected ? detectorsData.DetectionColor : detectorsData.IdleColor;
         GetComponent<MeshRenderer>().material.color = color;
            
     }

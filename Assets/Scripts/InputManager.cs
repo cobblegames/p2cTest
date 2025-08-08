@@ -21,8 +21,8 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
     [Header("Control Settings")]
     public bool invertYAxis = false;
     public bool invertXAxis = false;
-    [Range(0.1f, 100f)] public float xlookSensitivity = 1f;
-    [Range(0.1f, 100f)] public float ylookSensitivity = 1f;
+    [Range(0.1f, 100f)] public float xlookSensitivity = 50f;
+    [Range(0.1f, 100f)] public float ylookSensitivity = 50f;
     // Action names
     private const string MOVE_ACTION = "Move";
     private const string LOOK_ACTION = "Look";

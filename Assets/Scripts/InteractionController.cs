@@ -6,17 +6,8 @@ public class InteractionController : MonoBehaviour
     public LayerMask interactionLayer;
     public Camera playerCamera;
 
-    private void OnEnable()
-    {
-       GameEvents.OnTryInteract += TryInteract;
-    }
-
-    private void OnDisable()
-    {
-        GameEvents.OnTryInteract -= TryInteract;
-    }
-
-    private void TryInteract()
+   
+    public void TryInteract(PlayerAction action)
     {
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
         if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactionLayer))
@@ -24,7 +15,7 @@ public class InteractionController : MonoBehaviour
             IInteractable interactable = hit.collider.GetComponent<IInteractable>();
             if (interactable != null)
             {
-                interactable.Interact();
+                interactable.Interact(action);
             }
         }
     }

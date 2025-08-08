@@ -102,7 +102,7 @@ public class CameraDetectionSystem : MonoBehaviour
                     Debug.Log("Player detected by camera!");
 
                     GameEvents.PostOnPlayerDetected(true);
-                    detectionCone.UpdateConeColor(PlayerStatus.Detected);
+                    detectionCone.UpdateConeColor(PlayerAlarmStatus.Detected);
                     if (!audioSource.isPlaying)
                         audioSource.Play();
                     return;
@@ -110,7 +110,7 @@ public class CameraDetectionSystem : MonoBehaviour
             }
         }
         GameEvents.PostOnPlayerDetected(false);
-        detectionCone.UpdateConeColor(PlayerStatus.NotDetected);
+        detectionCone.UpdateConeColor(PlayerAlarmStatus.NotDetected);
         if (audioSource.isPlaying)
         {
             audioSource.Stop();
