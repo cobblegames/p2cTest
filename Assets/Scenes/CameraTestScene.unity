@@ -10323,8 +10323,8 @@ MonoBehaviour:
   defaultInputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   invertYAxis: 0
   invertXAxis: 0
-  xlookSensitivity: 46.6
-  ylookSensitivity: 26.8
+  xlookSensitivity: 41.1
+  ylookSensitivity: 30.8
 --- !u!1 &2134367824
 GameObject:
   m_ObjectHideFlags: 0

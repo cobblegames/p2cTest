@@ -7,6 +7,8 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
 {
     public event System.Action<Vector2> OnMove;
     public event System.Action<Vector2> OnLook;
+    public event System.Action<Vector2> OnPointerMove;
+
     public event System.Action OnJump;
     public event System.Action OnUseAction;
     public event System.Action OnShowRadialMenu;
@@ -19,11 +21,13 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
     public InputActionAsset defaultInputActions;
 
     InputAction moveAction;
+    InputAction pointerMoveAction;
     InputAction lookAction;
     InputAction jumpAction;
     InputAction useAction;
     InputAction radialMenuAction;
     InputAction menuAction;
+
     
 
         [Header("Control Settings")]
@@ -34,6 +38,7 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
     // Action names
     private const string MOVE_ACTION = "Move";
     private const string LOOK_ACTION = "Look";
+    private const string POINTER_ACTION = "PointerMove";
     private const string JUMP_ACTION = "Jump"; 
     private const string USE_ACTION = "UseAction";
     private const string RADIAL_MENU_ACTION = "RadialMenuAction";    
@@ -91,7 +96,8 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
         useAction = playerInput.actions[USE_ACTION];
         radialMenuAction = playerInput.actions[RADIAL_MENU_ACTION];
         menuAction = playerInput.actions[MENU_ACTION];
-        
+        pointerMoveAction = playerInput.actions[POINTER_ACTION];
+
 
         // Continuous inputs
         moveAction.performed += ctx =>
@@ -113,6 +119,11 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
 
         };
 
+        pointerMoveAction.performed += ctx =>
+        {
+            OnPointerMove?.Invoke(ctx.ReadValue<Vector2>());
+        };
+
         lookAction.canceled += ctx =>
         {
             OnLook?.Invoke(Vector2.zero);
@@ -122,10 +133,9 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
         // Discrete inputs
         jumpAction.performed += _ => HandleJumpAction();
         useAction.performed += _ => HandeUseAction();
-        radialMenuAction.performed += _ => HandleRadialMenuAction();
+        radialMenuAction.performed += _ => OnShowRadialMenu?.Invoke();
+        radialMenuAction.canceled += _ => OnHideRadialMenu?.Invoke();
         menuAction.performed += _ => HandleMenuAction();
-
-
 
     }
 
@@ -148,17 +158,6 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
         
     }
 
-    private void HandleRadialMenuAction()
-    {
-        if (radialMenuAction.WasPressedThisFrame())
-        {
-            OnShowRadialMenu?.Invoke();
-        }
-        else if (radialMenuAction.WasReleasedThisFrame())
-        {
-            OnHideRadialMenu?.Invoke();
-        }
-    }
 
     private void HandleMenuAction()
     {

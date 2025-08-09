@@ -77,4 +77,20 @@ public class TheftObject : MonoBehaviour, IInteractable
         ChangeStatus(ObjectStatus.Stolen);
         transform.SetParent(carryingPoint);
     }
+
+    public void Drop()
+    {
+        if (playerReference != null)
+        {
+            Debug.Log($"Dropping {gameObject.name} from {playerReference.name}");
+            ChangeStatus(ObjectStatus.Static);
+            transform.SetParent(null);
+           
+            playerReference = null;
+        }
+        else
+        {
+            Debug.LogWarning("No player reference to drop the object.");
+        }
+    }
 }

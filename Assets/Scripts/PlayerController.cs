@@ -50,7 +50,21 @@ public class PlayerController : MonoBehaviour
     private void ExecuteAction()
     {
         Debug.Log($"Executing action: {currentPlayerAction}");
-        interactionController.TryInteract(this);
+
+        if(currentPlayerAction== PlayerAction.Drop)
+        {
+            if (currentTheftObject != null)
+            {
+                Debug.Log($"Dropping object: {currentTheftObject.gameObject.name}");
+                currentTheftObject.Drop();
+                currentTheftObject = null;
+            }
+            return;
+        }else
+        {
+            interactionController.TryInteract(this);
+        }
+        
     }
 
    public void RegisterTheftObject(TheftObject theftObject)

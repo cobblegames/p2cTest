@@ -41,7 +41,7 @@ public class RadialMenu : MonoBehaviour
         InputManager.Instance.OnShowRadialMenu += ActivateMenu;
         InputManager.Instance.OnHideRadialMenu += DeactivateMenu;
     
-        InputManager.Instance.OnLook += HandleSelection;
+        InputManager.Instance.OnPointerMove += HandleSelection;
     }
 
     private void OnDisable()
@@ -51,7 +51,7 @@ public class RadialMenu : MonoBehaviour
             InputManager.Instance.OnShowRadialMenu -= ActivateMenu;
             InputManager.Instance.OnHideRadialMenu -= DeactivateMenu;
           
-            InputManager.Instance.OnLook -= HandleSelection;
+            InputManager.Instance.OnPointerMove -= HandleSelection;
 
         }
     }
@@ -141,19 +141,21 @@ public class RadialMenu : MonoBehaviour
     {
         if (currentSelection >= 0 && currentSelection < segments.Count)
         {
+            Debug.Log($"Executing action: {segments[currentSelection].actionData.name}");
             segments[currentSelection].ExecuteAction();
         }
     }
 
     private void DeactivateMenu()
     {
+        ExecuteAction();
         isActive = false;
         menuRoot.SetActive(false);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.None;
         currentSelection = -1;
         UpdateSelectionDisplay();
-        ExecuteAction();
+       
     }
 
     private void HandleSelection(Vector2 cursorPosition)
@@ -163,9 +165,9 @@ public class RadialMenu : MonoBehaviour
             return;
         }
 
-        Vector2 mousePosition = cursorPosition;
+     
         Vector2 centerPosition = centerPoint.position;
-        Vector2 direction = (mousePosition - centerPosition).normalized;
+        Vector2 direction = (cursorPosition - centerPosition).normalized;
 
         float angle = Mathf.Atan2(-direction.y, direction.x) * Mathf.Rad2Deg;
         angle = (angle + 360f + 90f) % 360f; // Adjust for Unity's coordinate system
