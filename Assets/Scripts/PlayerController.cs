@@ -13,6 +13,15 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] List<MenuActionData> menuActions;
     [SerializeField] InteractionController interactionController;
+
+
+    [SerializeField] Transform carringReferencePoint;
+    public Transform CarryingPoint => carringReferencePoint;
+
+    TheftObject currentTheftObject;
+    public TheftObject CurrentTheftObject  => currentTheftObject;
+
+
     private void OnEnable()
     {
         InputManager.Instance.OnUseAction += ExecuteAction;
@@ -40,11 +49,20 @@ public class PlayerController : MonoBehaviour
 
     private void ExecuteAction()
     {
-
-        interactionController.TryInteract(currentPlayerAction);
+        Debug.Log($"Executing action: {currentPlayerAction}");
+        interactionController.TryInteract(this);
     }
 
-   
+   public void RegisterTheftObject(TheftObject theftObject)
+    {
+        if (currentTheftObject != null)
+        {
+            Debug.LogWarning("Already carrying an object. Cannot register a new one.");
+            return;
+        }
+        currentTheftObject = theftObject;
+      
+    }
 
     private void InitRadialMenu()
     {

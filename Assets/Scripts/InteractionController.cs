@@ -7,7 +7,7 @@ public class InteractionController : MonoBehaviour
     public Camera playerCamera;
 
    
-    public void TryInteract(PlayerAction action)
+    public void TryInteract(PlayerController player)
     {
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
         if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactionLayer))
@@ -15,7 +15,7 @@ public class InteractionController : MonoBehaviour
             IInteractable interactable = hit.collider.GetComponent<IInteractable>();
             if (interactable != null)
             {
-                interactable.Interact(action);
+                interactable.Interact(player);
             }
         }
     }

@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 3883324086658722346}
   - component: {fileID: 1577991634606516501}
   - component: {fileID: 6918655431852029413}
+  - component: {fileID: 5499354810116026231}
   - component: {fileID: 5667562041905900454}
   - component: {fileID: 7678146099587707739}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Theft_Object
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -88,6 +89,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5499354810116026231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5096327378709723700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3728879cc409c7645b531620d9825b92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignedAction: 0
+  objectStatus: 0
 --- !u!65 &5667562041905900454
 BoxCollider:
   m_ObjectHideFlags: 0

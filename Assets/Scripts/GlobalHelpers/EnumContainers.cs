@@ -10,3 +10,10 @@ public enum PlayerAlarmStatus
 { NotDetected = 0, 
     Detected = 1 
 }
+
+public enum ObjectStatus
+{
+    Static = 0,
+    Moving = 1,
+    Stolen = 2
+}

@@ -1,4 +1,4 @@
 public interface IInteractable
 {
-    void Interact(PlayerAction action);
+    void Interact(PlayerController player);
 }

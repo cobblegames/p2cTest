@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -17,8 +18,15 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
     public PlayerInput playerInput;
     public InputActionAsset defaultInputActions;
 
+    InputAction moveAction;
+    InputAction lookAction;
+    InputAction jumpAction;
+    InputAction useAction;
+    InputAction radialMenuAction;
+    InputAction menuAction;
+    
 
-    [Header("Control Settings")]
+        [Header("Control Settings")]
     public bool invertYAxis = false;
     public bool invertXAxis = false;
     [Range(0.1f, 100f)] public float xlookSensitivity = 50f;
@@ -38,6 +46,22 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
         transform.parent = null;
         InitializeInputSystem();
     }
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+    }
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        SetupInputCallbacks();
+    }
+
 
     private void InitializeInputSystem()
     {
@@ -61,12 +85,12 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
         }
 
         // Set up action callbacks
-        var moveAction = playerInput.actions[MOVE_ACTION];
-        var lookAction = playerInput.actions[LOOK_ACTION];
-        var jumpAction = playerInput.actions[JUMP_ACTION];
-        var useAction = playerInput.actions[USE_ACTION];
-        var radialMenuAction = playerInput.actions[RADIAL_MENU_ACTION];
-        var menuAction = playerInput.actions[MENU_ACTION];
+        moveAction = playerInput.actions[MOVE_ACTION];
+        lookAction = playerInput.actions[LOOK_ACTION];
+        jumpAction = playerInput.actions[JUMP_ACTION];
+        useAction = playerInput.actions[USE_ACTION];
+        radialMenuAction = playerInput.actions[RADIAL_MENU_ACTION];
+        menuAction = playerInput.actions[MENU_ACTION];
         
 
         // Continuous inputs
@@ -96,22 +120,56 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
         };
 
         // Discrete inputs
-        jumpAction.performed += _ => OnJump?.Invoke();
-        useAction.performed += _ => OnUseAction?.Invoke();
-        radialMenuAction.performed += _ => OnShowRadialMenu?.Invoke();
-        radialMenuAction.canceled += _ => OnHideRadialMenu?.Invoke();
-        menuAction.performed += _ => OnMenu?.Invoke();
+        jumpAction.performed += _ => HandleJumpAction();
+        useAction.performed += _ => HandeUseAction();
+        radialMenuAction.performed += _ => HandleRadialMenuAction();
+        menuAction.performed += _ => HandleMenuAction();
+
+
+
+    }
+
+    private void HandeUseAction()
+    {
+       if(useAction.WasPressedThisFrame())
+        {
+            Debug.Log("Use action triggered");
+            OnUseAction?.Invoke();
+        }
+            
+    }
+
+    private void HandleJumpAction()
+    {
+        if (jumpAction.WasPressedThisFrame())
+        {
+            OnJump?.Invoke();
+        }
         
     }
 
-
-    private void OnEnable() => SceneManager.sceneLoaded += OnSceneLoaded;
-    private void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoaded;
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void HandleRadialMenuAction()
     {
-        SetupInputCallbacks();
+        if (radialMenuAction.WasPressedThisFrame())
+        {
+            OnShowRadialMenu?.Invoke();
+        }
+        else if (radialMenuAction.WasReleasedThisFrame())
+        {
+            OnHideRadialMenu?.Invoke();
+        }
     }
 
+    private void HandleMenuAction()
+    {
+        if (menuAction.WasPressedThisFrame())
+        {
+            OnMenu?.Invoke();
+        }
+    }
+
+
+
+    
 
 }
