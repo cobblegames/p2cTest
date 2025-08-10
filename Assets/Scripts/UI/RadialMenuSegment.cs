@@ -21,7 +21,7 @@ public class RadialMenuSegment : MonoBehaviour
 
     public void SetHighlight(bool highlight)
     {
-        segmentVisual.color = highlight ? menu.highlightColor : menu.normalColor;
+        segmentVisual.color = highlight ? menu.RadialMenuData.HighlightColor : menu.RadialMenuData.NormalColor;
         segmentVisual.SetVerticesDirty(); // Update the visual
     }
 

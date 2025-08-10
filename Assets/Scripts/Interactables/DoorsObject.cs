@@ -20,9 +20,11 @@ public class DoorsObject : MonoBehaviour, IInteractable
         GameEvents.OnPlayerDetected -= Handle_PlayerDetectedState;
     }
 
-    public void Interact(PlayerController player)
+    public void Interact(IInjectable _player)
     {
-        if(player.PlayerAction == assignedAction)
+        PlayerController player = _player as PlayerController;
+
+        if (player.PlayerAction == assignedAction)
         {
             Transform targetPosition = doorStatus == DoorStatus.Closed ? openPoint : closedPoint;
             StartCoroutine(MoveDoor(targetPosition,2f));

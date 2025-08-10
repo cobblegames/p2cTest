@@ -1,34 +1,30 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-
-public class RadialMenu : MonoBehaviour
+using TMPro;
+public class RadialMenu : MonoBehaviour, IInjectable
 {
- 
+    PlayerController _player;
+    InputManager _inputManager;
+    HUDMenuScreen _hud;
+
+
     [Header("Settings")]
-    public float radius = 200f;
-
-    public float segmentThickness = 50f;
-
-    //  public KeyCode activationKey = KeyCode.Q;
-    public Color normalColor = new Color(0.2f, 0.2f, 0.2f, 0.8f);
-
-    public Color highlightColor = new Color(0.4f, 0.4f, 0.8f, 0.8f);
-    public Color textColor = Color.white;
-    public int textFontSize = 20;
+    [SerializeField] private RadialMenuData radialMenuData;
+    public RadialMenuData RadialMenuData => radialMenuData;
 
     [Header("References")]
     public Transform segmentContainer;
 
     public Transform centerPoint;
-    public Text selectionText;
+    public TextMeshProUGUI selectionText;
 
     [SerializeField] private GameObject menuRoot;
 
     private List<RadialMenuSegment> segments = new List<RadialMenuSegment>();
     private bool isActive = false;
     private int currentSelection = -1;
-
+   
     [System.Serializable]
     public class MenuAction
     {
@@ -36,25 +32,56 @@ public class RadialMenu : MonoBehaviour
         public System.Action action;
     }
 
-    private void OnEnable()
+   
+
+
+    public void Initialize(IInjectable[] _injectedElements)
     {
-        InputManager.Instance.OnShowRadialMenu += ActivateMenu;
-        InputManager.Instance.OnHideRadialMenu += DeactivateMenu;
-    
-        InputManager.Instance.OnPointerMove += HandleSelection;
+
+        InitRadialMenu();
+        RegisterEvents();
     }
 
-    private void OnDisable()
+    public void RegisterInjectable()
     {
-        if (InputManager.Instance)
+        InterfaceDependencyInjector.Instance.RegisterInjectable(this);
+       
+    }
+
+    private void RegisterEvents()
+    {
+        _inputManager.OnShowRadialMenu += ActivateMenu;
+        _inputManager.OnHideRadialMenu += DeactivateMenu;
+        _inputManager.OnPointerMove += HandleSelection;
+    }
+
+    private void UnregisterEvents()
+    {
+        _inputManager.OnShowRadialMenu -= ActivateMenu;
+        _inputManager.OnHideRadialMenu -= DeactivateMenu;
+        _inputManager.OnPointerMove -= HandleSelection;
+    }
+
+    private void InitRadialMenu()
+    {
+        var actions = new List<RadialMenu.MenuAction>();
+        foreach (var action in radialMenuData.MenuActions)
         {
-            InputManager.Instance.OnShowRadialMenu -= ActivateMenu;
-            InputManager.Instance.OnHideRadialMenu -= DeactivateMenu;
-          
-            InputManager.Instance.OnPointerMove -= HandleSelection;
-
+            actions.Add(new RadialMenu.MenuAction
+            {
+                name = action.Action.ToString(),
+                action = () =>
+                {
+                 
+                    GameEvents.PostOnChangePlayerAction(action.Action);
+                    action.ExecuteAction();
+                }
+            });
         }
+
+        CreateMenu(actions);
     }
+
 
     public void CreateMenu(List<MenuAction> actions)
     {
@@ -77,33 +104,33 @@ public class RadialMenu : MonoBehaviour
             // Add required UI components
             var rectTransform = segmentObj.AddComponent<RectTransform>();
             rectTransform.localPosition = Vector3.zero; // Center position
-            rectTransform.sizeDelta = new Vector2(radius * 2, radius * 2);
+            rectTransform.sizeDelta = new Vector2(radialMenuData.Radius * 2, radialMenuData.Radius * 2);
             segmentObj.AddComponent<CanvasRenderer>();
 
             // Add UIMeshSegment component
             UIMeshSegment segmentVisual = segmentObj.AddComponent<UIMeshSegment>();
-            segmentVisual.color = normalColor;
+            segmentVisual.color = radialMenuData.NormalColor;
             segmentVisual.UpdateSegment(
                 currentDegree,
                 currentDegree + segmentDegree,
-                radius - segmentThickness,
-                radius
+                radialMenuData.Radius - radialMenuData.SegmentThickness,
+                radialMenuData.Radius
             );
 
             // Add text label
             GameObject textObj = new GameObject("Label");
             textObj.transform.SetParent(segmentObj.transform, false);
 
-            Text textComponent = textObj.AddComponent<Text>();
+            TextMeshProUGUI textComponent = textObj.AddComponent<TextMeshProUGUI>();
             textComponent.text = actions[i].name;
-            textComponent.color = textColor;
-            textComponent.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            textComponent.fontSize = textFontSize;
-            textComponent.alignment = TextAnchor.MiddleCenter;
+            textComponent.color = radialMenuData.TextColor;
+          //  textComponent.font = Resources.Load<TMP_FontAsset>("LiberationSans SDF");
+            textComponent.fontSize = radialMenuData.TextFontSize;
+            textComponent.alignment = TextAlignmentOptions.MidlineJustified;
 
             // Position the text (no rotation needed)
             float midAngle = currentDegree + segmentDegree * 0.5f;
-            float textDistance = radius - (segmentThickness / 2f);
+            float textDistance = radialMenuData.Radius - (radialMenuData.SegmentThickness / 2f);
             textObj.transform.localPosition = new Vector3(
                 Mathf.Sin(midAngle * Mathf.Deg2Rad) * textDistance,
                 Mathf.Cos(midAngle * Mathf.Deg2Rad) * textDistance,
@@ -210,7 +237,7 @@ public class RadialMenu : MonoBehaviour
     {
         // Calculate the center point of the segment at the middle radius
         float segmentAngle = 360f / segments.Count;
-        float midRadius = radius - (segmentThickness / 2f);
+        float midRadius = radialMenuData.Radius - (radialMenuData.SegmentThickness / 2f);
         float segmentRotation = segment.localEulerAngles.z;
         float centerAngle = (segmentRotation + segmentAngle / 2f) * Mathf.Deg2Rad;
 
@@ -230,20 +257,5 @@ public class RadialMenu : MonoBehaviour
         }
     }
 
-    //public void HighlightSegment(int index)
-    //{
-    //    if (currentSelection >= 0 && currentSelection < segments.Count)
-    //    {
-    //        segments[currentSelection].SetHighlight(false);
-    //    }
-
-    //    currentSelection = index;
-
-    //    if (currentSelection >= 0 && currentSelection < segments.Count)
-    //    {
-    //        segments[currentSelection].SetHighlight(true);
-    //    }
-
-    //    UpdateSelectionDisplay();
-    //}
+ 
 }

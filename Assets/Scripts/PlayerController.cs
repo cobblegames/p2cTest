@@ -2,89 +2,99 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IInjectable
 {
-    [SerializeField] PlayerMovementController movement;
+    [Header("Injected dependencies")]
+    [SerializeField] private InputManager _inputManager;
 
-    [SerializeField] PlayerAlarmStatus playerStatus;
+    [Header("Local dependencies")]
+    [SerializeField] private InteractionController interactionController;
+
+    [SerializeField] private PlayerMovementController _movement;
+
+    [SerializeField] private PlayerAlarmStatus playerStatus;
     public PlayerAlarmStatus PlayerStatus => playerStatus;
-    [SerializeField] PlayerAction currentPlayerAction;
+    [SerializeField] private PlayerAction currentPlayerAction;
     public PlayerAction PlayerAction => currentPlayerAction;
-    public RadialMenu radialMenu;
 
-    [SerializeField] List<MenuActionData> menuActions;
-    [SerializeField] InteractionController interactionController;
-
-
-    [SerializeField] Transform carringReferencePoint;
+    [SerializeField] private Transform carringReferencePoint;
     public Transform CarryingPoint => carringReferencePoint;
 
-    TheftObject currentTheftObject;
-    public TheftObject CurrentTheftObject  => currentTheftObject;
-
+    private TheftObject currentTheftObject;
+    public TheftObject CurrentTheftObject => currentTheftObject;
 
     private void OnEnable()
     {
-        InputManager.Instance.OnUseAction += ExecuteAction;
-        GameEvents.OnPlayerDetected += Handle_PlayerDetectedState;
+        GameEvents.OnRegisterInjectables += RegisterInjectable;
     }
-
- 
 
     private void OnDisable()
     {
-        GameEvents.OnPlayerDetected -= Handle_PlayerDetectedState;
-        if (InputManager.Instance)
-        {
-            InputManager.Instance.OnUseAction -= ExecuteAction;
-        }
-      
+        GameEvents.OnRegisterInjectables -= RegisterInjectable;
+        UnregisterEvents();
     }
-    private void Start()
+
+    public void RegisterInjectable()
     {
-        InitRadialMenu();
-        GameManager.Instance.RegisterPlayer(this);
+        InterfaceDependencyInjector.Instance.RegisterInjectable(this);
+    }
+
+    public void Initialize(IInjectable[] _injectedElements)
+    {
+        _inputManager = _injectedElements[0] as InputManager;
+
+        RegisterEvents();
+    }
+
+    private void RegisterEvents()
+    {
+        _inputManager.OnUseAction += ExecuteAction;
+        GameEvents.OnPlayerDetected += Handle_PlayerDetectedState;
+        GameEvents.OnChangePlayerAction += ChangePlayerAction;
+    }
+
+    private void UnregisterEvents()
+    {
+        _inputManager.OnUseAction -= ExecuteAction;
+        GameEvents.OnPlayerDetected -= Handle_PlayerDetectedState;
+        GameEvents.OnChangePlayerAction -= ChangePlayerAction;
     }
 
     private void Handle_PlayerDetectedState(bool isDetected)
     {
-       if(isDetected)
+        if (isDetected)
         {
-           playerStatus = PlayerAlarmStatus.Detected;
-           if(CurrentTheftObject!=null)
+            playerStatus = PlayerAlarmStatus.Detected;
+            if (CurrentTheftObject != null)
             {
                 CurrentTheftObject.Drop();
-                currentTheftObject = null;
-                movement.SetSpeedMultiplier(1f); // Reset speed when not carrying an object
             }
-              
-
         }
         else
         {
             playerStatus = PlayerAlarmStatus.NotDetected;
-           
         }
     }
 
-    private void ChangePlayerAction(PlayerAction newAction)
+    private void ChangePlayerAction(PlayerAction action)
     {
-        currentPlayerAction = newAction;
+        currentPlayerAction = action;
+
+        Debug.Log($"Player action changed to: {action}");
     }
 
     private void ExecuteAction()
     {
         Debug.Log($"Executing action: {currentPlayerAction}");
         interactionController.TryInteract(this);
-         
     }
+
     public void UnregisterTheftObject()
     {
         currentTheftObject = null;
-        movement.SetSpeedMultiplier(1f); // Reset speed when not carrying an object
     }
 
-   public void RegisterTheftObject(TheftObject theftObject)
+    public void RegisterTheftObject(TheftObject theftObject)
     {
         if (currentTheftObject != null)
         {
@@ -92,26 +102,5 @@ public class PlayerController : MonoBehaviour
             return;
         }
         currentTheftObject = theftObject;
-        movement.SetSpeedMultiplier(0.5f); // Slow down when carrying an object
     }
-
-    private void InitRadialMenu()
-    {
-        var actions = new List<RadialMenu.MenuAction>();
-        foreach (var action in menuActions)
-        {
-            actions.Add(new RadialMenu.MenuAction
-            {
-                name = action.Action.ToString(),
-                action = () =>
-                {
-                    ChangePlayerAction(action.Action);
-                    action.ExecuteAction();
-                }
-            });
-        }
-
-        radialMenu.CreateMenu(actions);
-    }
-
 }

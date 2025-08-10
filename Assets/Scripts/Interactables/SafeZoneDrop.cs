@@ -3,39 +3,37 @@ using UnityEngine;
 
 public class SafeZoneDrop : MonoBehaviour, IInteractable
 {
-    [SerializeField] PlayerAction assignedAction;
-    [SerializeField] Transform dropPoint;
-    public void Interact(PlayerController player)
+    [SerializeField] private PlayerAction assignedAction;
+    [SerializeField] private Transform dropPoint;
+
+    public void Interact(IInjectable player)
     {
-        if (player.PlayerAction == assignedAction)
+        PlayerController _player = player as PlayerController;
+
+        if (_player.PlayerAction == assignedAction)
         {
-            if (player.CurrentTheftObject != null)
+            if (_player.CurrentTheftObject != null)
             {
-
-                StartCoroutine(MoveTheftObjectToDropPoint(player.CurrentTheftObject, 5f));
-                
+                StartCoroutine(MoveTheftObjectToDropPoint(_player.CurrentTheftObject, 5f));
             }
-
         }
         else
         {
-            Debug.LogWarning($"Player {player.name} cannot drop here, action mismatch with {assignedAction}");
+            Debug.LogWarning($"Player {_player.name} cannot drop here, action mismatch with {assignedAction}");
         }
-
     }
 
-    IEnumerator MoveTheftObjectToDropPoint(TheftObject theftObject, float speed)
+    private IEnumerator MoveTheftObjectToDropPoint(TheftObject theftObject, float speed)
     {
         //Randomize the drop point position slightly to avoid exact same drop every time
-        Vector3 randomizedDropPosition = dropPoint.position + new Vector3(Random.Range(-0.5f, 0.5f), 0, Random.Range(-0.5f, 0.5f));
-
+        Vector3 randomizedDropPosition = dropPoint.position + new Vector3(Random.Range(-2f, 2), 0, Random.Range(-2f, 2f));
+        theftObject.transform.SetParent(null);
         while (Vector3.Distance(theftObject.transform.position, randomizedDropPosition) > 0.1f)
         {
             theftObject.transform.position = Vector3.MoveTowards(theftObject.transform.position, randomizedDropPosition, speed * Time.deltaTime);
             yield return null;
-        }     
+        }
         theftObject.transform.SetParent(dropPoint);
         theftObject.Deliver();
     }
-
 }

@@ -2,73 +2,68 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using Utils;
-public class InputManager : MonoBehaviourSingleton<InputManager>
+
+public class InputManager : MonoBehaviour, IInjectable
 {
+
+    #region System Events - this way we can separate the input system from the game logic
     public event System.Action<Vector2> OnMove;
     public event System.Action<Vector2> OnLook;
     public event System.Action<Vector2> OnPointerMove;
-
     public event System.Action OnJump;
     public event System.Action OnUseAction;
     public event System.Action OnShowRadialMenu;
     public event System.Action OnHideRadialMenu;
     public event System.Action OnMenu;
-    
+    #endregion
 
+    #region New Input System Configuration
     [Header("Input Configuration")]
     public PlayerInput playerInput;
     public InputActionAsset defaultInputActions;
 
-    InputAction moveAction;
-    InputAction pointerMoveAction;
-    InputAction lookAction;
-    InputAction jumpAction;
-    InputAction useAction;
-    InputAction radialMenuAction;
-    InputAction menuAction;
+    private InputAction moveAction;
+    private InputAction pointerMoveAction;
+    private InputAction lookAction;
+    private InputAction jumpAction;
+    private InputAction useAction;
+    private InputAction radialMenuAction;
+    private InputAction menuAction;
 
-    
+    #endregion
 
-        [Header("Control Settings")]
-    public bool invertYAxis = false;
-    public bool invertXAxis = false;
-    [Range(0.1f, 100f)] public float xlookSensitivity = 50f;
-    [Range(0.1f, 100f)] public float ylookSensitivity = 50f;
+    [Header("Control Settings")]
+    [SerializeField] private bool invertYAxis = false;
+    [SerializeField] private bool invertXAxis = false;
+    [SerializeField] [Range(0.1f, 100f)] private float xlookSensitivity = 50f;
+    [SerializeField] [Range(0.1f, 100f)] private float ylookSensitivity = 50f;
+
     // Action names
     private const string MOVE_ACTION = "Move";
+
     private const string LOOK_ACTION = "Look";
     private const string POINTER_ACTION = "PointerMove";
-    private const string JUMP_ACTION = "Jump"; 
+    private const string JUMP_ACTION = "Jump";
     private const string USE_ACTION = "UseAction";
-    private const string RADIAL_MENU_ACTION = "RadialMenuAction";    
+    private const string RADIAL_MENU_ACTION = "RadialMenuAction";
     private const string MENU_ACTION = "GameMenuAction";
-    
 
-    protected override void Awake()
-    {
-        base.Awake();
-        transform.parent = null;
-        InitializeInputSystem();
-    }
     private void OnEnable()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-
+        GameEvents.OnRegisterInjectables += RegisterInjectable;
     }
+
     private void OnDisable()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-
+        GameEvents.OnRegisterInjectables -= RegisterInjectable;
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    public void RegisterInjectable()
     {
-        SetupInputCallbacks();
+        InterfaceDependencyInjector.Instance.RegisterInjectable(this);
     }
 
-
-    private void InitializeInputSystem()
+    public void Initialize(IInjectable[] _injectedElements)
     {
         playerInput = GetComponent<PlayerInput>() ?? gameObject.AddComponent<PlayerInput>();
 
@@ -79,7 +74,6 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
 
         SetupInputCallbacks();
     }
-
 
     private void SetupInputCallbacks()
     {
@@ -98,7 +92,6 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
         menuAction = playerInput.actions[MENU_ACTION];
         pointerMoveAction = playerInput.actions[POINTER_ACTION];
 
-
         // Continuous inputs
         moveAction.performed += ctx =>
         {
@@ -116,7 +109,6 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
             if (invertYAxis) lookValue.y *= -1;
 
             OnLook?.Invoke(lookValue);
-
         };
 
         pointerMoveAction.performed += ctx =>
@@ -127,7 +119,6 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
         lookAction.canceled += ctx =>
         {
             OnLook?.Invoke(Vector2.zero);
-
         };
 
         // Discrete inputs
@@ -136,17 +127,15 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
         radialMenuAction.performed += _ => OnShowRadialMenu?.Invoke();
         radialMenuAction.canceled += _ => OnHideRadialMenu?.Invoke();
         menuAction.performed += _ => HandleMenuAction();
-
     }
 
     private void HandeUseAction()
     {
-       if(useAction.WasPressedThisFrame())
+        if (useAction.WasPressedThisFrame())
         {
             Debug.Log("Use action triggered");
             OnUseAction?.Invoke();
         }
-            
     }
 
     private void HandleJumpAction()
@@ -155,9 +144,7 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
         {
             OnJump?.Invoke();
         }
-        
     }
-
 
     private void HandleMenuAction()
     {
@@ -166,9 +153,4 @@ public class InputManager : MonoBehaviourSingleton<InputManager>
             OnMenu?.Invoke();
         }
     }
-
-
-
-    
-
 }

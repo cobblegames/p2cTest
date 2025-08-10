@@ -3,7 +3,15 @@ using UnityEngine;
 
 public static class GameEvents 
 {
-  
+    public static event System.Action OnRegisterInjectables;
+    public static void PostOnRegisterInjectables()
+    {
+        if (OnRegisterInjectables != null)
+            OnRegisterInjectables();
+    }
+
+
+
     public static event System.Action<bool> OnPlayerDetected;
     public static void PostOnPlayerDetected(bool isDetected)
     {
@@ -20,12 +28,7 @@ public static class GameEvents
             OnGameStart();
     }
 
-    public static event System.Action OnGameEnd;
-    public static void PostOnGameEnd()
-    {
-        if (OnGameEnd != null)
-            OnGameEnd();
-    }
+   
 
     public static event System.Action OnGameWon;
     public static void PostOnGameWon()
@@ -49,13 +52,12 @@ public static class GameEvents
             OnChangePlayerAction(action);
     }
 
-    public static event System.Action OnUpdateGameUI;
-    public static void PostOnUpdateGameUI()
+    public static event System.Action OnFinishMenuTransition;
+    public static void PostOnFinishMenuTransition()
     {
-        if (OnUpdateGameUI != null)
-            OnUpdateGameUI();
+        if (OnFinishMenuTransition != null)
+            OnFinishMenuTransition();
     }
-
 
 
 

@@ -34,3 +34,13 @@ public enum GameState
     Winning = 2,
     Losing = 3,
 }
+
+[System.Serializable]
+public enum MenuScreenState
+{
+    Shown = 0,
+    Hidden = 1,
+    Selected = 2,
+    Deselected = 3,
+    Error = 4
+}

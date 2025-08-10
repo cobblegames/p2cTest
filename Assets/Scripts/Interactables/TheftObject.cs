@@ -1,22 +1,41 @@
 using System.Collections;
 using UnityEngine;
 
-public class TheftObject : MonoBehaviour, IInteractable
+public class TheftObject : MonoBehaviour, IInteractable, IInjectable
 {
     [SerializeField] PlayerAction assignedAction;
     [SerializeField] ObjectStatus objectStatus = ObjectStatus.Static;
 
     Rigidbody rb;
     Collider objectCollider;
-    PlayerController playerReference;
-    void Start()
+
+    PlayerController _player;
+    LevelManager _levelManager;
+
+    void OnEnable()
     {
+        GameEvents.OnRegisterInjectables += RegisterInjectable;
+    }
+
+    void OnDisable()
+    {
+        GameEvents.OnRegisterInjectables -= RegisterInjectable;
+    }
+
+    public void Initialize(IInjectable[] _injectedElements)
+    {
+        _levelManager = _injectedElements[0] as LevelManager;
+        // We could inject the PlayerController if needed, but for now we just need GameController - PlayerController will be set during interaction
+        // In case we may have more than one player - this way we can store only the one who is currently interacting with the object
+
         rb = GetComponent<Rigidbody>();
         objectCollider = GetComponent<Collider>();
         ChangeStatus(ObjectStatus.Static);
+    }
 
-        GameManager.Instance.RegisterTheftObject(this);
-
+    public void RegisterInjectable()
+    {
+       InterfaceDependencyInjector.Instance.RegisterInjectable(this);
     }
 
     void ChangeStatus(ObjectStatus newStatus)
@@ -49,33 +68,35 @@ public class TheftObject : MonoBehaviour, IInteractable
         }
     }
 
-    public void Interact(PlayerController player)
+    public void Interact(IInjectable player)
     {
-       if(player.PlayerAction == assignedAction)
+        _player = player as PlayerController;
+
+        if (_player.PlayerAction == assignedAction)
         {
-            playerReference = player;
-         
-            Debug.Log($"Player {playerReference.name} is stealing {gameObject.name}");
         
-     
-            if(playerReference.CurrentTheftObject==null)
+            Debug.Log($"Player {_player.name} is stealing {gameObject.name}");
+        
+            if(_player.CurrentTheftObject==null)
             {
-                playerReference.RegisterTheftObject(this);
+                _player.RegisterTheftObject(this);
                 ChangeStatus(ObjectStatus.Moving);
-                StartCoroutine(MoveTowardsCarryingPoint(playerReference.CarryingPoint, 5f));
+                StartCoroutine(MoveTowardsCarryingPoint(_player.CarryingPoint, 5f));
             }
             else
-                Debug.Log($"{playerReference.name} is already carrying an object: {playerReference.CurrentTheftObject.gameObject.name}");
+                Debug.Log($"{_player.name} is already carrying an object: {_player.CurrentTheftObject.gameObject.name}");
 
         }
         else
         {
-            Debug.Log($"Player {player.name} cannot steal {gameObject.name} with current action: {player.PlayerAction}");
+            Debug.Log($"Player {_player.name} cannot steal {gameObject.name} with current action: {_player.PlayerAction}");
         }
     }
 
     IEnumerator MoveTowardsCarryingPoint(Transform carryingPoint, float speed)
     {
+        transform.SetParent(null);
+
         while (Vector3.Distance(transform.position, carryingPoint.position) > 0.1f)
         {
             transform.position = Vector3.MoveTowards(transform.position, carryingPoint.position, speed * Time.deltaTime);
@@ -87,13 +108,13 @@ public class TheftObject : MonoBehaviour, IInteractable
 
     public void Drop()
     {
-        if (playerReference != null)
+        if (_player != null)
         {
-            Debug.Log($"Dropping {gameObject.name} from {playerReference.name}");
+            Debug.Log($"Dropping {gameObject.name} from {_player.name}");
+            _player.UnregisterTheftObject();
             ChangeStatus(ObjectStatus.Static);
             transform.SetParent(null);
-           
-            playerReference = null;
+            _player = null;
         }
         else
         {
@@ -103,13 +124,14 @@ public class TheftObject : MonoBehaviour, IInteractable
 
     public void Deliver()
     {
-        if (playerReference != null)
+        if (_player != null)
         {
-            playerReference.UnregisterTheftObject();
-            GameManager.Instance.UnregisterTheftObject(this);
+            _player.UnregisterTheftObject();
+            _player = null;
             ChangeStatus(ObjectStatus.Safe);
+
         }
     }
 
-    
+  
 }
