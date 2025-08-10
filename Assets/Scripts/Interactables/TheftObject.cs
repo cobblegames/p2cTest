@@ -15,6 +15,8 @@ public class TheftObject : MonoBehaviour, IInteractable
         objectCollider = GetComponent<Collider>();
         ChangeStatus(ObjectStatus.Static);
 
+        GameManager.Instance.RegisterTheftObject(this);
+
     }
 
     void ChangeStatus(ObjectStatus newStatus)
@@ -33,6 +35,11 @@ public class TheftObject : MonoBehaviour, IInteractable
                 objectCollider.enabled = false;
                 break;
             case ObjectStatus.Stolen:
+                rb.isKinematic = true;
+                objectCollider.enabled = false;
+                break;
+
+            case ObjectStatus.Safe:
                 rb.isKinematic = true;
                 objectCollider.enabled = false;
                 break;
@@ -93,4 +100,16 @@ public class TheftObject : MonoBehaviour, IInteractable
             Debug.LogWarning("No player reference to drop the object.");
         }
     }
+
+    public void Deliver()
+    {
+        if (playerReference != null)
+        {
+            playerReference.UnregisterTheftObject();
+            GameManager.Instance.UnregisterTheftObject(this);
+            ChangeStatus(ObjectStatus.Safe);
+        }
+    }
+
+    
 }

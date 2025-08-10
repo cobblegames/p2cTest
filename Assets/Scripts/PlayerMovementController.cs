@@ -1,26 +1,22 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Windows;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovementController : MonoBehaviour
 {
-
-    [SerializeField] PlayerData playerData;
-
-    //public float moveSpeed = 5f;
-    //public float jumpHeight = 1.5f;
-    //public float gravity = -9.81f;
+    [SerializeField] private PlayerData playerData;
 
     [Header("Mouse Look")]
     public Transform cameraTransform;
-
     private float xRotation = 0f;
-
     private CharacterController controller;
     private Vector3 velocity;
     private bool isGrounded;
-    private bool lockMovement = false;  
-    Vector2 moveInput;
+    private bool lockMovement = true;
+    private Vector2 moveInput;
+    private float speedMultiplier = 1f; // Speed multiplier for movement
+    private bool gameIsStarted = false;
 
     private void OnEnable()
     {
@@ -29,6 +25,8 @@ public class PlayerMovementController : MonoBehaviour
         InputManager.Instance.OnJump += HandleJump;
         InputManager.Instance.OnShowRadialMenu += () => lockMovement = true;
         InputManager.Instance.OnHideRadialMenu += () => lockMovement = false;
+
+        GameEvents.OnGameStart += HandleStartGame;
     }
 
     private void OnDisable()
@@ -41,30 +39,38 @@ public class PlayerMovementController : MonoBehaviour
             InputManager.Instance.OnShowRadialMenu -= () => lockMovement = true;
             InputManager.Instance.OnHideRadialMenu -= () => lockMovement = false;
         }
-  
-        
+        GameEvents.OnGameStart -= HandleStartGame;
     }
 
-    void Start()
+    private void Start()
     {
         controller = GetComponent<CharacterController>();
 
         if (cameraTransform == null)
             cameraTransform = Camera.main.transform;
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
+    public void SetSpeedMultiplier(float multiplier)
+    {
+        speedMultiplier = multiplier;
+    }
 
+    private void HandleStartGame()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        gameIsStarted = true;
+        lockMovement = false; // Unlock movement when the game starts
+        StartCoroutine(MovementCorutine());
+    }
 
-    void HandleLook(Vector2 _input)
+    private void HandleLook(Vector2 _input)
     {
         if (lockMovement)
             return;
 
-        float mouseX = _input.x *  Time.deltaTime;
-        float mouseY = _input.y *  Time.deltaTime;
+        float mouseX = _input.x * Time.deltaTime;
+        float mouseY = _input.y * Time.deltaTime;
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
@@ -73,35 +79,34 @@ public class PlayerMovementController : MonoBehaviour
         transform.Rotate(Vector3.up * mouseX);
     }
 
-    private void Update()
+    private IEnumerator MovementCorutine()
     {
-        isGrounded = controller.isGrounded;
-        if (isGrounded && velocity.y < 0)
-            velocity.y = -2f;
-
-        float x = moveInput.x;
-        float z = moveInput.y;
-
-        if (lockMovement)
+        while (gameIsStarted)
         {
-            x = 0f;
-            z = 0f;
+            isGrounded = controller.isGrounded;
+            if (isGrounded && velocity.y < 0)
+                velocity.y = -2f;
+            float x = moveInput.x;
+            float z = moveInput.y;
+            if (lockMovement)
+            {
+                x = 0f;
+                z = 0f;
+            }
+            Vector3 move = transform.right * x + transform.forward * z;
+            controller.Move(move * playerData.MoveSpeed * speedMultiplier * Time.deltaTime);
+            velocity.y += playerData.Gravity * Time.deltaTime;
+            controller.Move(velocity * Time.deltaTime);
+            yield return new WaitForEndOfFrame(); // Wait for the next frame
         }
-
-        Vector3 move = transform.right * x + transform.forward * z;
-        controller.Move(move * playerData.MoveSpeed * Time.deltaTime);
-
-
-        velocity.y += playerData.Gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
     }
 
-    void HandleMovement(Vector2 _input)
+    private void HandleMovement(Vector2 _input)
     {
         moveInput = _input;
     }
 
-    void HandleJump()
+    private void HandleJump()
     {
         if (isGrounded)
         {

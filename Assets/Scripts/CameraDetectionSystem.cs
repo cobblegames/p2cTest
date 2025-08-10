@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
 public class CameraDetectionSystem : MonoBehaviour
@@ -25,6 +27,9 @@ public class CameraDetectionSystem : MonoBehaviour
 
     [SerializeField] int cameraID;
     [SerializeField] AudioSource audioSource;
+    bool gameIsStarted = false;
+
+    Coroutine cameraMainLoop;
     private void Start()
     {
         // Store initial LOCAL y rotation
@@ -38,11 +43,38 @@ public class CameraDetectionSystem : MonoBehaviour
         detectionCone.InitCone(detectorsData);
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        RotateCamera();
-        CheckForPlayer();
+        GameEvents.OnGameStart += HandleGameStart;
     }
+
+    private void OnDisable()
+    {
+        GameEvents.OnGameStart -= HandleGameStart;
+        
+    }
+
+    private void HandleGameStart()
+    {
+        gameIsStarted = true;
+        cameraMainLoop = StartCoroutine(CameraMainLoop());
+    }
+
+    IEnumerator CameraMainLoop()
+    {
+
+      while (gameIsStarted)
+        {
+            RotateCamera();
+            CheckForPlayer();
+
+            yield return new WaitForEndOfFrame();
+        }
+      
+       
+    }
+
+   
 
     private void RotateCamera()
     {

@@ -16,6 +16,14 @@ public class InteractionController : MonoBehaviour
             if (interactable != null)
             {
                 interactable.Interact(player);
+            }else
+            {
+                if(player.CurrentTheftObject != null && player.PlayerAction == PlayerAction.Drop)
+                {
+                    player.CurrentTheftObject.Drop();
+                    player.UnregisterTheftObject();
+                }
+              
             }
         }
     }

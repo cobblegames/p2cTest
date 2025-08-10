@@ -6,7 +6,8 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] PlayerMovementController movement;
 
-    PlayerAlarmStatus playerStatus;
+    [SerializeField] PlayerAlarmStatus playerStatus;
+    public PlayerAlarmStatus PlayerStatus => playerStatus;
     [SerializeField] PlayerAction currentPlayerAction;
     public PlayerAction PlayerAction => currentPlayerAction;
     public RadialMenu radialMenu;
@@ -25,11 +26,15 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         InputManager.Instance.OnUseAction += ExecuteAction;
+        GameEvents.OnPlayerDetected += Handle_PlayerDetectedState;
     }
+
+ 
 
     private void OnDisable()
     {
-        if(InputManager.Instance)
+        GameEvents.OnPlayerDetected -= Handle_PlayerDetectedState;
+        if (InputManager.Instance)
         {
             InputManager.Instance.OnUseAction -= ExecuteAction;
         }
@@ -38,10 +43,30 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         InitRadialMenu();
+        GameManager.Instance.RegisterPlayer(this);
     }
 
+    private void Handle_PlayerDetectedState(bool isDetected)
+    {
+       if(isDetected)
+        {
+           playerStatus = PlayerAlarmStatus.Detected;
+           if(CurrentTheftObject!=null)
+            {
+                CurrentTheftObject.Drop();
+                currentTheftObject = null;
+                movement.SetSpeedMultiplier(1f); // Reset speed when not carrying an object
+            }
+              
 
-  
+        }
+        else
+        {
+            playerStatus = PlayerAlarmStatus.NotDetected;
+           
+        }
+    }
+
     private void ChangePlayerAction(PlayerAction newAction)
     {
         currentPlayerAction = newAction;
@@ -50,21 +75,13 @@ public class PlayerController : MonoBehaviour
     private void ExecuteAction()
     {
         Debug.Log($"Executing action: {currentPlayerAction}");
-
-        if(currentPlayerAction== PlayerAction.Drop)
-        {
-            if (currentTheftObject != null)
-            {
-                Debug.Log($"Dropping object: {currentTheftObject.gameObject.name}");
-                currentTheftObject.Drop();
-                currentTheftObject = null;
-            }
-            return;
-        }else
-        {
-            interactionController.TryInteract(this);
-        }
-        
+        interactionController.TryInteract(this);
+         
+    }
+    public void UnregisterTheftObject()
+    {
+        currentTheftObject = null;
+        movement.SetSpeedMultiplier(1f); // Reset speed when not carrying an object
     }
 
    public void RegisterTheftObject(TheftObject theftObject)
@@ -75,13 +92,12 @@ public class PlayerController : MonoBehaviour
             return;
         }
         currentTheftObject = theftObject;
-      
+        movement.SetSpeedMultiplier(0.5f); // Slow down when carrying an object
     }
 
     private void InitRadialMenu()
     {
         var actions = new List<RadialMenu.MenuAction>();
-
         foreach (var action in menuActions)
         {
             actions.Add(new RadialMenu.MenuAction

@@ -15,5 +15,22 @@ public enum ObjectStatus
 {
     Static = 0,
     Moving = 1,
-    Stolen = 2
+    Stolen = 2,
+    Safe = 3
+}
+
+ public enum DoorStatus 
+{
+    Open = 0,
+    Closed = 1,
+    Locked = 2
+}
+
+
+public enum GameState
+{
+    MainMenu = 0,
+    InGame = 1,
+    Winning = 2,
+    Losing = 3,
 }

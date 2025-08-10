@@ -20,7 +20,28 @@ public static class GameEvents
             OnGameStart();
     }
 
-    
+    public static event System.Action OnGameEnd;
+    public static void PostOnGameEnd()
+    {
+        if (OnGameEnd != null)
+            OnGameEnd();
+    }
+
+    public static event System.Action OnGameWon;
+    public static void PostOnGameWon()
+    {
+        if (OnGameWon != null)
+            OnGameWon();
+    }
+
+    public static event System.Action OnGameLost;
+    public static void PostOnGameLost()
+    {
+        if (OnGameLost != null)
+            OnGameLost();
+    }
+
+
     public static event System.Action<PlayerAction> OnChangePlayerAction;
     public static void PostOnChangePlayerAction(PlayerAction action)
     {
@@ -28,7 +49,14 @@ public static class GameEvents
             OnChangePlayerAction(action);
     }
 
-   
+    public static event System.Action OnUpdateGameUI;
+    public static void PostOnUpdateGameUI()
+    {
+        if (OnUpdateGameUI != null)
+            OnUpdateGameUI();
+    }
+
+
 
 
 
