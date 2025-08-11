@@ -44,6 +44,7 @@ public class InterfaceDependencyInjector : MonoBehaviourSingleton<InterfaceDepen
         levelManager?.Initialize(new IInjectable[] { hudManager});
         inputManager?.Initialize(new IInjectable[0]);
         mainMenuUIController.Initialize(new IInjectable[0]);
+        radialMenu?.Initialize(new IInjectable[] { inputManager});
 
         Debug.Log("All injectables initialized successfully.");
         

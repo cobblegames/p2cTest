@@ -13,7 +13,7 @@ public class GameController : MonoBehaviour, IInjectable
 
     private void OnEnable()
     {
-        GameEvents.OnChangeGameState -= ChangeGameState;
+        GameEvents.OnChangeGameState += ChangeGameState;
     }
 
     private void OnDisable()

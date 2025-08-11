@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using TMPro;
 public class RadialMenu : MonoBehaviour, IInjectable
 {
+    [Header ("Injectable Dependencies")]
+    [SerializeField]InputManager _inputManager;
 
-    InputManager _inputManager;
 
 
-
-    [Header("Settings")]
+    [Header("Settings - drag from inspector")]
     [SerializeField] private RadialMenuData radialMenuData;
     public RadialMenuData RadialMenuData => radialMenuData;
 
-    [Header("References")]
+    [Header("References - drag from inspector")]
     public Transform segmentContainer;
 
     public Transform centerPoint;
@@ -32,13 +32,16 @@ public class RadialMenu : MonoBehaviour, IInjectable
         public System.Action action;
     }
 
-   
+    private void OnDisable()
+    {
+        UnregisterEvents();
+    }
 
 
     public void Initialize(IInjectable[] _injectedElements)
     {
        
-        _inputManager = _injectedElements[1] as InputManager;
+        _inputManager = _injectedElements[0] as InputManager;
     
 
         InitRadialMenu();
