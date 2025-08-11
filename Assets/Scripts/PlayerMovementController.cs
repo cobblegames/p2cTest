@@ -26,21 +26,15 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
 
     private void OnEnable()
     {
-     GameEvents.OnRegisterInjectables += RegisterInjectable;
 
     }
 
     private void OnDisable()
     {
-        GameEvents.OnRegisterInjectables -= RegisterInjectable;
+      
         UnregisterEvents();
     }
 
-
-    public void RegisterInjectable()
-    {
-      InterfaceDependencyInjector.Instance.RegisterInjectable(this);
-    }
 
 
     public void Initialize(IInjectable[] _injectedElements)

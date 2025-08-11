@@ -20,8 +20,7 @@ public class HUDMenuScreen : MenuScreen, IInjectable
 
     private void OnEnable()
     {
-        GameEvents.OnRegisterInjectables += RegisterInjectable;
-
+  
 
     }
 
@@ -29,8 +28,7 @@ public class HUDMenuScreen : MenuScreen, IInjectable
 
     private void OnDisable()
     {
-        
-        GameEvents.OnRegisterInjectables -= RegisterInjectable;
+  
     }
 
     public void Initialize(IInjectable[] _injectedElements)
@@ -55,12 +53,6 @@ public class HUDMenuScreen : MenuScreen, IInjectable
      
     }
 
-
-    public void RegisterInjectable()
-    {
-       InterfaceDependencyInjector.Instance.RegisterInjectable(this);
-      
-    }
 
     void HandleStartGame()
     {

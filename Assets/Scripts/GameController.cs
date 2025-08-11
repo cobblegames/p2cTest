@@ -12,12 +12,12 @@ public class GameController : MonoBehaviour, IInjectable
 
     private void OnEnable()
     {
-        GameEvents.OnRegisterInjectables += RegisterInjectable;
+       
     }
 
     private void OnDisable()
     {
-        GameEvents.OnRegisterInjectables -= RegisterInjectable;
+       
     }
 
     public void Initialize(IInjectable[] _injectedElements)
@@ -28,8 +28,5 @@ public class GameController : MonoBehaviour, IInjectable
         _levelManager = _injectedElements[3] as LevelManager;
     }
 
-    public void RegisterInjectable()
-    {
-        InterfaceDependencyInjector.Instance.RegisterInjectable(this);
-    }
+   
 }

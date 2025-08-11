@@ -5,16 +5,11 @@ using UnityEngine;
 public class CameraDetectionSystem : MonoBehaviour
 {
     [Header("Camera Settings")]
-    [SerializeField] DetectorsData detectorsData;
-
-
-
-
-    [SerializeField] VisibleDetectionCone detectionCone;
+    [SerializeField] private DetectorsData detectorsData;
+    [SerializeField] private VisibleDetectionCone detectionCone;
 
     [Header("Gizmos Settings")]
     [SerializeField] private bool showGizmos = true;
-
     [SerializeField] private float gizmoHeight = 0.5f;
 
     private float initialLocalYRotation;
@@ -25,11 +20,11 @@ public class CameraDetectionSystem : MonoBehaviour
     private bool playerDetected = false;
     private Transform playerTransform;
 
-    [SerializeField] int cameraID;
-    [SerializeField] AudioSource audioSource;
-    bool gameIsStarted = false;
+    [SerializeField] private AudioSource audioSource;
+    private bool gameIsStarted = false;
 
-    Coroutine cameraMainLoop;
+    private Coroutine cameraMainLoop;
+
     private void Start()
     {
         // Store initial LOCAL y rotation
@@ -51,7 +46,6 @@ public class CameraDetectionSystem : MonoBehaviour
     private void OnDisable()
     {
         GameEvents.OnGameStart -= HandleGameStart;
-        
     }
 
     private void HandleGameStart()
@@ -60,25 +54,20 @@ public class CameraDetectionSystem : MonoBehaviour
         cameraMainLoop = StartCoroutine(CameraMainLoop());
     }
 
-    IEnumerator CameraMainLoop()
+    private IEnumerator CameraMainLoop()
     {
-
-      while (gameIsStarted)
+        while (gameIsStarted)
         {
             RotateCamera();
             CheckForPlayer();
 
             yield return new WaitForEndOfFrame();
         }
-      
-       
     }
-
-   
 
     private void RotateCamera()
     {
-        if(playerDetected) return; // Skip rotation if player is detected
+        if (playerDetected) return; // Skip rotation if player is detected
         float rotationStep = detectorsData.RotationSpeed * Time.deltaTime;
 
         if (rotatingRight)

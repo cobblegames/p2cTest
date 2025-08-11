@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using TMPro;
 public class RadialMenu : MonoBehaviour, IInjectable
 {
-    PlayerController _player;
+
     InputManager _inputManager;
-    HUDMenuScreen _hud;
+
 
 
     [Header("Settings")]
@@ -37,16 +37,14 @@ public class RadialMenu : MonoBehaviour, IInjectable
 
     public void Initialize(IInjectable[] _injectedElements)
     {
+       
+        _inputManager = _injectedElements[1] as InputManager;
+    
 
         InitRadialMenu();
         RegisterEvents();
     }
 
-    public void RegisterInjectable()
-    {
-        InterfaceDependencyInjector.Instance.RegisterInjectable(this);
-       
-    }
 
     private void RegisterEvents()
     {

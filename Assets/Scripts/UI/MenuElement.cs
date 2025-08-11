@@ -1,7 +1,10 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-public class MenuElement : MonoBehaviour
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
+public class MenuElement : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+
 {
     [SerializeField] protected MenuStateProperties[] _menuStateProperties;
     [SerializeField] protected MenuScreenState currentMenuState = MenuScreenState.Hidden;
@@ -72,23 +75,6 @@ public class MenuElement : MonoBehaviour
     protected virtual void Handle_OnDeselected(){}
 
 
-    public virtual void Show()
-    {
-        HandleMenuState(MenuScreenState.Shown);
-    }
-
-    public virtual void Hide()
-    {
-        HandleMenuState(MenuScreenState.Hidden);
-    }
-    public virtual void Select()
-    {
-        HandleMenuState(MenuScreenState.Selected);
-    }
-    public virtual void Deselect()
-    {
-        HandleMenuState(MenuScreenState.Deselected);
-    }
 
     public IEnumerator ChangeScale(RectTransform menuRect, Vector3 targetScale, float duration)
     {
@@ -131,4 +117,18 @@ public class MenuElement : MonoBehaviour
         GameEvents.PostOnFinishMenuTransition();
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        HandleMenuState(MenuScreenState.Selected);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        HandleMenuState(MenuScreenState.Deselected);
+    }
 }

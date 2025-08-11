@@ -5,31 +5,31 @@ using UnityEngine.UI;
 public class MainMenuUIController : MenuScreen, IInjectable
 {
     [Header ("Local References")]
-    [SerializeField] Button startButton;
-    [SerializeField] Button exitGameButton;
+    [SerializeField] MenuElement startButton;
+    [SerializeField] MenuElement exitGameButton;
   
     void OnEnable()
     {
-        GameEvents.OnRegisterInjectables += RegisterInjectable;
+    
     }
     void OnDisable()
     {
-        GameEvents.OnRegisterInjectables -= RegisterInjectable;
+    
     }
-    public void RegisterInjectable()
-    {
-        InterfaceDependencyInjector.Instance.RegisterInjectable(this);
-    }
+   
     public void Initialize(IInjectable[] _injectedElements)
     {
 
         if (startButton != null)
         {
-            startButton.onClick.AddListener(OnStartButtonClicked);
+         
+           
+            Debug.Log("Start Button Initialized");
         }
         if (exitGameButton != null)
         {
-            exitGameButton.onClick.AddListener(OnExitGameButtonClicked);
+           
+            Debug.Log("Exit Game Button Initialized");
         }
 
     }
@@ -41,6 +41,7 @@ public class MainMenuUIController : MenuScreen, IInjectable
 
     private void OnStartButtonClicked()
     {
+        Debug.Log("Starting Game...");
         GameEvents.PostOnGameStart();
     }
 

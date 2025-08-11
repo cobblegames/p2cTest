@@ -14,12 +14,12 @@ public class TheftObject : MonoBehaviour, IInteractable, IInjectable
 
     void OnEnable()
     {
-        GameEvents.OnRegisterInjectables += RegisterInjectable;
+     
     }
 
     void OnDisable()
     {
-        GameEvents.OnRegisterInjectables -= RegisterInjectable;
+      
     }
 
     public void Initialize(IInjectable[] _injectedElements)
@@ -33,11 +33,7 @@ public class TheftObject : MonoBehaviour, IInteractable, IInjectable
         ChangeStatus(ObjectStatus.Static);
     }
 
-    public void RegisterInjectable()
-    {
-       InterfaceDependencyInjector.Instance.RegisterInjectable(this);
-    }
-
+ 
     void ChangeStatus(ObjectStatus newStatus)
     {
         objectStatus = newStatus;
