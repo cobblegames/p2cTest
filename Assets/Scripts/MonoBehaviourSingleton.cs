@@ -33,13 +33,13 @@ namespace Utils
                             var singletonObject = new GameObject($"{typeof(T)} (Singleton)");
                             _instance = singletonObject.AddComponent<T>();
 
-                            DontDestroyOnLoad(singletonObject);
+                            //    DontDestroyOnLoad(singletonObject);
 
                             Debug.Log($"Created new singleton instance of {typeof(T)}");
                         }
                         else
                         {
-                            DontDestroyOnLoad(_instance.gameObject);
+                            //       DontDestroyOnLoad(_instance.gameObject);
                         }
 
                         Assert.IsNotNull(_instance, string.Format(SingletonIsNull, typeof(T)));
@@ -83,8 +83,8 @@ namespace Utils
             {
                 if (_instance == null)
                 {
-                    _instance = this as T;              
-                    DontDestroyOnLoad(gameObject);
+                    _instance = this as T;
+                    //        DontDestroyOnLoad(gameObject);
                 }
                 else if (_instance != this)
                 {

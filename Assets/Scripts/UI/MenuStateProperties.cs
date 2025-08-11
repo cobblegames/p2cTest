@@ -50,15 +50,15 @@ public class MenuStateProperties
             }
         }
 
-        if(_menuObjectData.ChangeControlledImageColor)
+        if (_menuObjectData.ChangeControlledImageColor)
         {
             if (element.ControlledImage != null)
             {
-               element.StartCoroutine(element.ChangeImageColor(element.ControlledImage, _menuObjectData.ControlledImageColor, _menuObjectData.Duration));
+                element.StartCoroutine(element.ChangeImageColor(element.ControlledImage, _menuObjectData.ControlledImageColor, _menuObjectData.Duration));
             }
         }
 
-        if(_menuObjectData.ChangePosition)
+        if (_menuObjectData.ChangePosition)
         {
             if (element.Rect)
             {

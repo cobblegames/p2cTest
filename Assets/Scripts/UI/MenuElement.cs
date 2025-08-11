@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class MenuElement : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 
@@ -14,6 +14,7 @@ public class MenuElement : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     public RectTransform Rect => rect;
     public Image ControlledImage => controlImage;
     public CanvasGroup CanvasGroup => canvasGroup;
+
     protected MenuStateProperties GetMenuStateProperties(MenuScreenState _menuState)
     {
         for (int i = 0; i < _menuStateProperties.Length; i++)
@@ -26,7 +27,6 @@ public class MenuElement : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 
         return null;
     }
-
 
     public void HandleMenuState(MenuScreenState menuState)
     {
@@ -49,7 +49,6 @@ public class MenuElement : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 
         switch (currentMenuState)
         {
-         
             case MenuScreenState.Shown: Handle_OnShow(); break;
             case MenuScreenState.Hidden: Handle_OnHide(); break;
             case MenuScreenState.Selected: Handle_OnSelected(); break;
@@ -72,13 +71,23 @@ public class MenuElement : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
         }
     }
 
-    protected virtual void Handle_OnShow(){}
-    protected virtual void Handle_OnHide(){}
-    protected virtual void Handle_OnSelected(){}
-    protected virtual void Handle_OnDeselected(){}
-    protected virtual void Handle_OnClick(){}
-    protected virtual void Handle_OnFirstRun(){}
-   
+    protected virtual void Handle_OnShow()
+    { }
+
+    protected virtual void Handle_OnHide()
+    { }
+
+    protected virtual void Handle_OnSelected()
+    { }
+
+    protected virtual void Handle_OnDeselected()
+    { }
+
+    protected virtual void Handle_OnClick()
+    { }
+
+    protected virtual void Handle_OnFirstRun()
+    { }
 
     public IEnumerator ChangeScale(RectTransform menuRect, Vector3 targetScale, float duration)
     {
@@ -107,6 +116,7 @@ public class MenuElement : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
         canvasGroup.alpha = targetAlpha;
         GameEvents.PostOnFinishMenuTransition();
     }
+
     public IEnumerator ChangeImageColor(Image controlImage, Color targetColor, float duration)
     {
         Color initialColor = controlImage.color;
@@ -139,7 +149,6 @@ public class MenuElement : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     {
         Debug.Log("Menu Element Clicked: " + gameObject.name);
         HandleMenuState(MenuScreenState.Clicked);
-
     }
 
     public void OnPointerEnter(PointerEventData eventData)

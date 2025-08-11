@@ -4,10 +4,9 @@
     It checks for win and loss conditions based on the collected objects and game duration.
 */
 
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using UnityEngine;
 
 public class LevelManager : MonoBehaviour, IInjectable
 {
@@ -26,22 +25,21 @@ public class LevelManager : MonoBehaviour, IInjectable
 
     private Coroutine timer;
 
-    List<TheftObject> collectedObjects = new List<TheftObject>();
+    private List<TheftObject> collectedObjects = new List<TheftObject>();
 
-    private void OnEnable()
+
+    void RegisterEvents()
     {
         GameEvents.OnChangeGameState += Handle_GameStateChange;
+        GameEvents.OnRestartGame += UnregisterEvents;
     }
 
-  
-
-    private void OnDisable()
+    void UnregisterEvents()
     {
-
         GameEvents.OnChangeGameState -= Handle_GameStateChange;
+        GameEvents.OnRestartGame -= UnregisterEvents;
     }
 
- 
     public void Initialize(IInjectable[] _injectedElements)
     {
         _hudManager = _injectedElements[0] as HUDMenuScreen;
@@ -60,33 +58,34 @@ public class LevelManager : MonoBehaviour, IInjectable
                 Debug.LogWarning("LevelManager: Found a null TheftObject in the scene.");
             }
         }
-    }
 
+        RegisterEvents();
+    }
 
     private void Handle_GameStateChange(GameState _gameState)
     {
-        switch(_gameState)
+        switch (_gameState)
         {
             case GameState.MainMenu:
                 Handle_MainMenu();
                 break;
-            case GameState.InGame:
 
+            case GameState.InGame:
                 Handle_StartGame();
-            break;
+                break;
 
             case GameState.Winning:
-            Handle_WinGame();
-            break;
+                Handle_WinGame();
+                break;
+
             case GameState.Losing:
-            Handle_LostGame();
-            break;
+                Handle_LostGame();
+                break;
 
             default:
                 Debug.LogWarning($"LevelManager: Unhandled game state {_gameState}");
                 break;
-
-        }    
+        }
     }
 
     public void CollectTheftObject(TheftObject theftObject)
@@ -114,16 +113,15 @@ public class LevelManager : MonoBehaviour, IInjectable
         if (timer != null)
             StopCoroutine(timer);
 
-
         currentGameTime = 0f;
-        if(_hudManager != null)
-             _hudManager.UpdateGameUI();
+        if (_hudManager != null)
+            _hudManager.UpdateGameUI();
     }
 
     private void Handle_LostGame()
     {
         StopCoroutine(timer);
-        timer  = null;
+        timer = null;
     }
 
     private void Handle_WinGame()
@@ -134,8 +132,8 @@ public class LevelManager : MonoBehaviour, IInjectable
 
     private void Handle_StartGame()
     {
-        if(timer == null)
-             timer = StartCoroutine(GameTimer());
+        if (timer == null)
+            timer = StartCoroutine(GameTimer());
     }
 
     private IEnumerator GameTimer()
@@ -148,6 +146,5 @@ public class LevelManager : MonoBehaviour, IInjectable
             yield return new WaitForSeconds(1f);
         }
         Debug.Log("Game Over! Time's up!");
-      
     }
 }

@@ -1,9 +1,17 @@
+using TMPro;
 using UnityEngine;
 
-public class MainMenuUIController : MenuScreen, IInjectable
+public class WinMenuScreen : MenuScreen, IInjectable
 {
+    [Header("InjectableReference")]
+    private LevelManager _levelManager;
+
+    [Header("Local References")]
+    [SerializeField] private TextMeshProUGUI scoreValue;
+
     public void Initialize(IInjectable[] _injectedElements)
     {
+        _levelManager = _injectedElements[0] as LevelManager;
         RegisterEvents();
     }
 
@@ -19,7 +27,6 @@ public class MainMenuUIController : MenuScreen, IInjectable
         GameEvents.OnRestartGame -= UnregisterEvents;
     }
 
-
     protected override void Handle_GameStateChange(GameState _gameState)
     {
         base.Handle_GameStateChange(_gameState);
@@ -27,7 +34,7 @@ public class MainMenuUIController : MenuScreen, IInjectable
         switch (_gameState)
         {
             case GameState.MainMenu:
-                SwitchMenuState(MenuScreenState.Shown);
+                SwitchMenuState(MenuScreenState.Hidden);
                 break;
 
             case GameState.InGame:
@@ -35,7 +42,7 @@ public class MainMenuUIController : MenuScreen, IInjectable
                 break;
 
             case GameState.Winning:
-                SwitchMenuState(MenuScreenState.Hidden);
+                SwitchMenuState(MenuScreenState.Shown);
                 break;
 
             case GameState.Losing:
@@ -43,8 +50,14 @@ public class MainMenuUIController : MenuScreen, IInjectable
                 break;
 
             default:
-                Debug.LogWarning($"HUDMenuScreen: Unhandled game state {_gameState}");
+                Debug.LogWarning($"WinMenuScreen: Unhandled game state {_gameState}");
                 break;
         }
+    }
+
+    protected override void Handle_OnShow()
+    {
+        base.Handle_OnShow();
+        scoreValue.text = _levelManager.CurrentGameTime.ToString();
     }
 }

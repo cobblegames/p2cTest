@@ -36,4 +36,9 @@ public class SafeZoneDrop : MonoBehaviour, IInteractable
         theftObject.transform.SetParent(dropPoint);
         theftObject.Deliver();
     }
+
+    public void Target()
+    {
+        GameEvents.PostOnInteractableInRage(CrosshairState.TargetingDrop);
+    }
 }

@@ -1,12 +1,11 @@
-using System;
-using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
+using UnityEngine;
 
 public class HUDMenuScreen : MenuScreen, IInjectable
 {
     [Header("References - Drag those in inspector")]
     [SerializeField] private TextMeshProUGUI playerStatusValue;
+
     [SerializeField] private TextMeshProUGUI scoreValue;
     [SerializeField] private TextMeshProUGUI timerValue;
     [SerializeField] private TextMeshProUGUI currentPlayerAction;
@@ -14,45 +13,46 @@ public class HUDMenuScreen : MenuScreen, IInjectable
     [SerializeField] private Color detectedColor = Color.red;
     [SerializeField] private Color safeColor = Color.green;
 
-   
     private LevelManager _levelManager;
 
-    protected override void OnEnable()
+   
+    void RegisterEvents()
     {
-        base.OnEnable();
-        GameEvents.OnChangePlayerAction += ctx =>  currentPlayerAction.text = ctx.ToString() ;
+        GameEvents.OnChangeGameState += Handle_GameStateChange;
+        GameEvents.OnChangePlayerAction += ctx => currentPlayerAction.text = ctx.ToString();
         GameEvents.OnPlayerDetected += Handle_PlayerDetected;
-           
+        GameEvents.OnRestartGame += UnregisterEvents;
     }
 
-    protected override void OnDisable()
+    void UnregisterEvents()
     {
-        base.OnDisable();
+        GameEvents.OnChangeGameState -= Handle_GameStateChange;
         GameEvents.OnChangePlayerAction -= ctx => currentPlayerAction.text = ctx.ToString();
         GameEvents.OnPlayerDetected -= Handle_PlayerDetected;
+        GameEvents.OnRestartGame -= UnregisterEvents;
     }
-
 
     public void Initialize(IInjectable[] _injectedElements)
     {
-        
         _levelManager = _injectedElements[0] as LevelManager;
         if (_levelManager == null)
         {
             Debug.LogError("HUDMenuScreen: Failed to initialize dependencies.");
             return;
         }
+
+        RegisterEvents();
     }
 
     private void Handle_PlayerDetected(bool isDetected)
     {
         if (isDetected)
-        {         
+        {
             playerStatusValue.color = detectedColor;
             playerStatusValue.text = "Detected";
         }
         else
-        {         
+        {
             playerStatusValue.color = safeColor;
             playerStatusValue.text = "Safe";
         }

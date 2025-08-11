@@ -1,16 +1,15 @@
-
 using System.Collections;
 using UnityEngine;
-
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovementController : MonoBehaviour, IInjectable
 {
-    [Header ("Player Settings")]
+    [Header("Player Settings")]
     [SerializeField] private PlayerData playerData;
 
     [Header("Local References - Drag in Inspector")]
     [SerializeField] private CharacterController controller;
+
     [SerializeField] private Transform cameraTransform;
 
     private float xRotation = 0f;
@@ -21,26 +20,19 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
     private float speedMultiplier = 1f; // Speed multiplier for movement
     private bool gameIsStarted = false;
 
-    InputManager _inputManager;
-
-
-    private void OnDisable()
-    {
-      
-        UnregisterEvents();
-    }
-
-
+    private InputManager _inputManager;
 
     public void Initialize(IInjectable[] _injectedElements)
     {
         _inputManager = _injectedElements[0] as InputManager;
 
-        RegisterEvents();
+        
         controller = GetComponent<CharacterController>();
 
         if (cameraTransform == null)
             cameraTransform = Camera.main.transform;
+
+        RegisterEvents();
     }
 
     private void RegisterEvents()
@@ -51,12 +43,9 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
         _inputManager.OnShowRadialMenu += () => lockMovement = true;
         _inputManager.OnHideRadialMenu += () => lockMovement = false;
 
-        GameEvents.OnChangeGameState += Handle_ChangeGameState;
-        GameEvents.OnChangePlayerAction += Handle_ChangePlayerAction;
-
+        GameEvents.OnChangeGameState += Handle_ChangeGameState;     
+        GameEvents.OnRestartGame += UnregisterEvents;
     }
-
-  
 
     private void UnregisterEvents()
     {
@@ -66,8 +55,8 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
         _inputManager.OnShowRadialMenu -= () => lockMovement = true;
         _inputManager.OnHideRadialMenu -= () => lockMovement = false;
 
-      
-        GameEvents.OnChangePlayerAction -= Handle_ChangePlayerAction;
+        GameEvents.OnChangeGameState -= Handle_ChangeGameState;
+        GameEvents.OnRestartGame -= UnregisterEvents;
     }
 
     private void Handle_ChangeGameState(GameState state)
@@ -77,33 +66,34 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
             case GameState.MainMenu:
                 Handle_MainMenu();
                 break;
+
             case GameState.InGame:
                 Handle_StartGame();
                 break;
+
             case GameState.Winning:
                 Handle_WinGame();
                 break;
+
             case GameState.Losing:
                 Handle_LostGame();
 
-
                 break;
+
             default:
                 Debug.LogWarning($"Unhandled game state: {state}");
                 break;
         }
     }
-    private void Handle_ChangePlayerAction(PlayerAction action)
-    {
-        
-    }
+
+
 
     private void SetSpeedMultiplier(float multiplier)
     {
         speedMultiplier = multiplier;
     }
 
-    void Handle_MainMenu()
+    private void Handle_MainMenu()
     {
         lockMovement = true; // Lock movement in the main menu
         gameIsStarted = false;
@@ -114,11 +104,11 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
     private void Handle_StartGame()
     {
         lockMovement = false; // Lock movement when winning or losing
-        if(!gameIsStarted)
+        if (!gameIsStarted)
         {
             gameIsStarted = true;
             StartCoroutine(MovementCorutine());
-        }   
+        }
     }
 
     private void Handle_LostGame()
@@ -184,5 +174,4 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
             velocity.y = Mathf.Sqrt(playerData.JumpHeight * -2f * playerData.Gravity);
         }
     }
-
 }

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class GameController : MonoBehaviour, IInjectable
@@ -11,15 +10,6 @@ public class GameController : MonoBehaviour, IInjectable
     [SerializeField] private PlayerController _player;
     [SerializeField] private LevelManager _levelManager;
 
-    private void OnEnable()
-    {
-        GameEvents.OnChangeGameState += ChangeGameState;
-    }
-
-    private void OnDisable()
-    {
-        GameEvents.OnChangeGameState -= ChangeGameState;
-    }
 
     public void Initialize(IInjectable[] _injectedElements)
     {
@@ -28,6 +18,19 @@ public class GameController : MonoBehaviour, IInjectable
         _player = _injectedElements[2] as PlayerController;
         _levelManager = _injectedElements[3] as LevelManager;
 
+        RegisterEvents(); 
+    }
+
+    void RegisterEvents()
+    {
+        GameEvents.OnRestartGame += UnregisterEvents;
+        GameEvents.OnChangeGameState += ChangeGameState;
+    }
+
+    void UnregisterEvents()
+    {
+        GameEvents.OnRestartGame -= UnregisterEvents;
+        GameEvents.OnChangeGameState -= ChangeGameState;
     }
 
     public void FirstRun()
@@ -35,33 +38,48 @@ public class GameController : MonoBehaviour, IInjectable
         GameEvents.PostOnChangeGameState(GameState.MainMenu);
     }
 
-
-    void ChangeGameState(GameState _gameState)
+    private void ChangeGameState(GameState _gameState)
     {
-       gameState = _gameState;
+        gameState = _gameState;
 
-        switch(gameState)
+        switch (gameState)
         {
             case GameState.MainMenu:
                 Handle_MainMenu();
                 break;
+
             case GameState.InGame:
                 Handle_InGame();
                 break;
+
             case GameState.Winning:
-                // Handle winning state
+                Handle_WinGame();
                 break;
+
             case GameState.Losing:
-                // Handle losing state
+                Handle_LostGame();
                 break;
+
             case GameState.RadialMenu:
                 Handle_RadialMenu();
                 break;
+
             default:
                 Debug.LogWarning($"Unhandled game state: {gameState}");
                 break;
         }
+    }
 
+    private void Handle_WinGame()
+    {
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+    }
+
+    private void Handle_LostGame()
+    {
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
     }
 
     private void Handle_MainMenu()
@@ -70,15 +88,15 @@ public class GameController : MonoBehaviour, IInjectable
         Cursor.visible = true;
     }
 
-    void Handle_InGame()
+    private void Handle_InGame()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    void Handle_RadialMenu()
+    private void Handle_RadialMenu()
     {
-        Cursor.lockState = CursorLockMode.None;
+        Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
     }
 }

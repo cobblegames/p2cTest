@@ -5,10 +5,10 @@ public enum PlayerAction
     Use = 2,
 }
 
-
-public enum PlayerAlarmStatus 
-{ NotDetected = 0, 
-    Detected = 1 
+public enum PlayerAlarmStatus
+{
+    NotDetected = 0,
+    Detected = 1
 }
 
 public enum ObjectStatus
@@ -19,13 +19,12 @@ public enum ObjectStatus
     Safe = 3
 }
 
- public enum DoorStatus 
+public enum DoorStatus
 {
     Open = 0,
     Closed = 1,
     Locked = 2
 }
-
 
 public enum GameState
 {
@@ -46,4 +45,15 @@ public enum MenuScreenState
     Clicked = 4,
     FirstRun = 5, // Sometimes we need to initialize the menu state
     Error = 6
+}
+
+[System.Serializable]
+public enum CrosshairState
+{
+    Default = 0,
+    TargetingDrop = 1,
+    TargetingPickup = 2,
+    TargetingUse = 3,
+    Interacting = 4,
+    Disabled = 5
 }

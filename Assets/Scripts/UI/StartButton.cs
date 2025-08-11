@@ -8,6 +8,4 @@ public class StartButton : MenuElement
         Debug.Log("Start Button Clicked");
         GameEvents.PostOnChangeGameState(GameState.InGame);
     }
-
-
 }

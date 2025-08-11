@@ -1,10 +1,10 @@
 using UnityEngine;
-[CreateAssetMenu(fileName = "MenuActionData", menuName = "Settings/MenuAction", order = 100)]
 
+[CreateAssetMenu(fileName = "MenuActionData", menuName = "Settings/MenuAction", order = 100)]
 [System.Serializable]
 public class MenuActionData : ScriptableObject
 {
-    [SerializeField] PlayerAction action;
+    [SerializeField] private PlayerAction action;
     public PlayerAction Action => action;
 
     public void ExecuteAction()
@@ -12,5 +12,4 @@ public class MenuActionData : ScriptableObject
         // Additional logic;
         Debug.Log($"Executing action: {action}");
     }
-
 }

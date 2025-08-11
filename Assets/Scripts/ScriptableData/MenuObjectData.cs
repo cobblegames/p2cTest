@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "MenuObjectState", menuName = "Settings/Menu Object State")]
@@ -14,7 +12,7 @@ public class MenuObjectData : ScriptableObject
     [SerializeField] private Color _controlledImageColor;
     [SerializeField] private Vector3 _scale;
     [SerializeField] private Vector2 _position;
- 
+
     public float CanvasGroupAlpha => _canvasGroupAlpha;
     public float Duration => _duration;
     public Color ControlledImageColor => _controlledImageColor;
@@ -23,6 +21,7 @@ public class MenuObjectData : ScriptableObject
 
     [Header("Menu State Flags ")]
     [SerializeField] private bool _changeCanvasGroupAlpha = false;
+
     [SerializeField] private bool _changeControlledImageColor = false;
     [SerializeField] private bool _changeScale = false;
     [SerializeField] private bool _changePosition = false;

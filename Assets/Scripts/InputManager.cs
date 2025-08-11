@@ -1,25 +1,34 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 public class InputManager : MonoBehaviour, IInjectable
 {
-
     #region System Events - this way we can separate the input system from the game logic
+
     public event System.Action<Vector2> OnMove;
+
     public event System.Action<Vector2> OnLook;
+
     public event System.Action<Vector2> OnPointerMove;
+
     public event System.Action OnJump;
+
     public event System.Action OnUseAction;
+
     public event System.Action OnShowRadialMenu;
+
     public event System.Action OnHideRadialMenu;
+
     public event System.Action OnMenu;
-    #endregion
+
+    #endregion System Events - this way we can separate the input system from the game logic
 
     #region New Input System Configuration
+
     [Header("Input Configuration")]
     public PlayerInput playerInput;
+
     public InputActionAsset defaultInputActions;
 
     private InputAction moveAction;
@@ -30,33 +39,23 @@ public class InputManager : MonoBehaviour, IInjectable
     private InputAction radialMenuAction;
     private InputAction menuAction;
 
-    #endregion
+    #endregion New Input System Configuration
 
     [Header("Control Settings")]
     [SerializeField] private bool invertYAxis = false;
+
     [SerializeField] private bool invertXAxis = false;
-    [SerializeField] [Range(0.1f, 100f)] private float xlookSensitivity = 50f;
-    [SerializeField] [Range(0.1f, 100f)] private float ylookSensitivity = 50f;
+    [SerializeField][Range(0.1f, 100f)] private float xlookSensitivity = 50f;
+    [SerializeField][Range(0.1f, 100f)] private float ylookSensitivity = 50f;
 
     // Action names
     private const string MOVE_ACTION = "Move";
-
     private const string LOOK_ACTION = "Look";
     private const string POINTER_ACTION = "PointerMove";
     private const string JUMP_ACTION = "Jump";
     private const string USE_ACTION = "UseAction";
     private const string RADIAL_MENU_ACTION = "RadialMenuAction";
     private const string MENU_ACTION = "GameMenuAction";
-
-    private void OnEnable()
-    {
-  
-    }
-
-    private void OnDisable()
-    {
-    
-    }
 
     public void Initialize(IInjectable[] _injectedElements)
     {

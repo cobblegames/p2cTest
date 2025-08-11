@@ -1,7 +1,5 @@
-using System;
+
 using UnityEngine;
-
-
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class VisibleDetectionCone : MonoBehaviour

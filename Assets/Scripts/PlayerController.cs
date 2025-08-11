@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IInjectable
@@ -23,16 +21,6 @@ public class PlayerController : MonoBehaviour, IInjectable
     private TheftObject currentTheftObject;
     public TheftObject CurrentTheftObject => currentTheftObject;
 
-   
-
-    private void OnDisable()
-    {
-      
-        UnregisterEvents();
-    }
-
-  
-
     public void Initialize(IInjectable[] _injectedElements)
     {
         _inputManager = _injectedElements[0] as InputManager;
@@ -45,6 +33,7 @@ public class PlayerController : MonoBehaviour, IInjectable
         _inputManager.OnUseAction += ExecuteAction;
         GameEvents.OnPlayerDetected += Handle_PlayerDetectedState;
         GameEvents.OnChangePlayerAction += ChangePlayerAction;
+        GameEvents.OnRestartGame += UnregisterEvents;
     }
 
     private void UnregisterEvents()
@@ -52,6 +41,7 @@ public class PlayerController : MonoBehaviour, IInjectable
         _inputManager.OnUseAction -= ExecuteAction;
         GameEvents.OnPlayerDetected -= Handle_PlayerDetectedState;
         GameEvents.OnChangePlayerAction -= ChangePlayerAction;
+        GameEvents.OnRestartGame -= UnregisterEvents;
     }
 
     private void Handle_PlayerDetectedState(bool isDetected)

@@ -1,24 +1,16 @@
 using UnityEngine;
 
-public class MainMenuUIController : MenuScreen, IInjectable
+public class LoseMenuScreen : MenuScreen
 {
-    public void Initialize(IInjectable[] _injectedElements)
-    {
-        RegisterEvents();
-    }
-
-    void RegisterEvents()
+    private void OnEnable()
     {
         GameEvents.OnChangeGameState += Handle_GameStateChange;
-        GameEvents.OnRestartGame += UnregisterEvents;
     }
 
-    void UnregisterEvents()
+    private void OnDisable()
     {
         GameEvents.OnChangeGameState -= Handle_GameStateChange;
-        GameEvents.OnRestartGame -= UnregisterEvents;
     }
-
 
     protected override void Handle_GameStateChange(GameState _gameState)
     {
@@ -27,7 +19,7 @@ public class MainMenuUIController : MenuScreen, IInjectable
         switch (_gameState)
         {
             case GameState.MainMenu:
-                SwitchMenuState(MenuScreenState.Shown);
+                SwitchMenuState(MenuScreenState.Hidden);
                 break;
 
             case GameState.InGame:
@@ -39,11 +31,11 @@ public class MainMenuUIController : MenuScreen, IInjectable
                 break;
 
             case GameState.Losing:
-                SwitchMenuState(MenuScreenState.Hidden);
+                SwitchMenuState(MenuScreenState.Shown);
                 break;
 
             default:
-                Debug.LogWarning($"HUDMenuScreen: Unhandled game state {_gameState}");
+                Debug.LogWarning($"WinMenuScreen: Unhandled game state {_gameState}");
                 break;
         }
     }

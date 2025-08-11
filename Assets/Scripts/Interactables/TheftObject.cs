@@ -55,6 +55,8 @@ public class TheftObject : MonoBehaviour, IInteractable, IInjectable
         }
     }
 
+  
+
     public void Interact(IInjectable player)
     {
         _player = player as PlayerController;
@@ -121,5 +123,8 @@ public class TheftObject : MonoBehaviour, IInteractable, IInjectable
         }
     }
 
-  
+    public void Target()
+    {
+        GameEvents.PostOnInteractableInRage(CrosshairState.TargetingPickup);
+    }
 }
