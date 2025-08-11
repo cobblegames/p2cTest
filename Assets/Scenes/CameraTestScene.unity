@@ -6684,6 +6684,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Camera_Post (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2963756251051490734, guid: 04069a1ef693cbe46afa0622008373c4, type: 3}
+      propertyPath: detectorsData
+      value: 
+      objectReference: {fileID: 11400000, guid: 657cb64e1ba07e948ba231b042c897c2, type: 2}
     - target: {fileID: 6031138987961902094, guid: 04069a1ef693cbe46afa0622008373c4, type: 3}
       propertyPath: m_LocalPosition.x
       value: -18.71
@@ -6723,6 +6727,10 @@ PrefabInstance:
     - target: {fileID: 6031138987961902094, guid: 04069a1ef693cbe46afa0622008373c4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7544523584288619459, guid: 04069a1ef693cbe46afa0622008373c4, type: 3}
+      propertyPath: m_Range
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
