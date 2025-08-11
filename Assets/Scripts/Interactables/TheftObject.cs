@@ -99,6 +99,7 @@ public class TheftObject : MonoBehaviour, IInteractable, IInjectable
     {
         if (_player != null)
         {
+            StopAllCoroutines();
             Debug.Log($"Dropping {gameObject.name} from {_player.name}");
             _player.UnregisterTheftObject();
             ChangeStatus(ObjectStatus.Static);

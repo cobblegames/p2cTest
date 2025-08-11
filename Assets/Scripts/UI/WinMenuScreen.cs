@@ -9,6 +9,9 @@ public class WinMenuScreen : MenuScreen, IInjectable
     [Header("Local References")]
     [SerializeField] private TextMeshProUGUI scoreValue;
 
+    [SerializeField] private Camera _winCamera;
+    public Camera WinCamera => _winCamera;
+
     public void Initialize(IInjectable[] _injectedElements)
     {
         _levelManager = _injectedElements[0] as LevelManager;
@@ -35,18 +38,22 @@ public class WinMenuScreen : MenuScreen, IInjectable
         {
             case GameState.MainMenu:
                 SwitchMenuState(MenuScreenState.Hidden);
+                _winCamera.gameObject.SetActive(false);
                 break;
 
             case GameState.InGame:
                 SwitchMenuState(MenuScreenState.Hidden);
+                _winCamera.gameObject.SetActive(false);
                 break;
 
             case GameState.Winning:
                 SwitchMenuState(MenuScreenState.Shown);
+                _winCamera.gameObject.SetActive(true);
                 break;
 
             case GameState.Losing:
                 SwitchMenuState(MenuScreenState.Hidden);
+                _winCamera.gameObject.SetActive(false);
                 break;
 
             default:

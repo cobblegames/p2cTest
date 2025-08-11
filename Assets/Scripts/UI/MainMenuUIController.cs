@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class MainMenuUIController : MenuScreen, IInjectable
 {
+    [SerializeField] private Camera _menuCamera;
+
+
     public void Initialize(IInjectable[] _injectedElements)
     {
         RegisterEvents();
@@ -28,18 +31,22 @@ public class MainMenuUIController : MenuScreen, IInjectable
         {
             case GameState.MainMenu:
                 SwitchMenuState(MenuScreenState.Shown);
+                _menuCamera.gameObject.SetActive(true);
                 break;
 
             case GameState.InGame:
                 SwitchMenuState(MenuScreenState.Hidden);
+                _menuCamera.gameObject.SetActive(false);
                 break;
 
             case GameState.Winning:
                 SwitchMenuState(MenuScreenState.Hidden);
+                _menuCamera.gameObject.SetActive(false);
                 break;
 
             case GameState.Losing:
                 SwitchMenuState(MenuScreenState.Hidden);
+                _menuCamera.gameObject.SetActive(false);
                 break;
 
             default:

@@ -47,4 +47,15 @@ public static class GameEvents
         if (OnRestartGame != null)
             OnRestartGame();
     }
+
+    public static event System.Action OnCaughtPenalty;
+
+    public static void PostOnCaughtPenalty()
+    {
+        if (OnCaughtPenalty != null)
+            OnCaughtPenalty();
+    }
+
+
+
 }

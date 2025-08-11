@@ -1,12 +1,10 @@
-
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class VisibleDetectionCone : MonoBehaviour
 {
-
     [SerializeField] private int rayCount = 30;
-    DetectorsData detectorsData;
+    private DetectorsData detectorsData;
 
     [Header("Visual Settings")]
     [SerializeField] private Material coneMaterial;
@@ -17,7 +15,6 @@ public class VisibleDetectionCone : MonoBehaviour
     private Vector3[] vertices;
     private int[] triangles;
 
-
     public void InitCone(DetectorsData data)
     {
         detectorsData = data;
@@ -27,13 +24,10 @@ public class VisibleDetectionCone : MonoBehaviour
         GenerateCompleteCone();
         UpdateConeColor(PlayerAlarmStatus.NotDetected);
     }
-    
-
- 
 
     public void GenerateCompleteCone()
     {
-        // Vertex count: 
+        // Vertex count:
         // - 1 for tip
         // - rayCount for wall edges
         // - rayCount for base perimeter
@@ -54,9 +48,10 @@ public class VisibleDetectionCone : MonoBehaviour
         for (int i = 0; i < rayCount; i++)
         {
             float angle = 2 * Mathf.PI * i / rayCount;
+            // Corrected angle calculation - use proper spherical coordinates
             Vector3 localDirection = Quaternion.Euler(
-                Mathf.Sin(angle) * detectorsData.DetectionAngle * 0.5f,
                 Mathf.Cos(angle) * detectorsData.DetectionAngle * 0.5f,
+                Mathf.Sin(angle) * detectorsData.DetectionAngle * 0.5f,
                 0) * Vector3.forward;
 
             Vector3 worldDirection = transform.TransformDirection(localDirection);
@@ -115,14 +110,9 @@ public class VisibleDetectionCone : MonoBehaviour
         mesh.RecalculateNormals();
     }
 
-
-
     public void UpdateConeColor(PlayerAlarmStatus status)
     {
         Color color = status == PlayerAlarmStatus.Detected ? detectorsData.DetectionColor : detectorsData.IdleColor;
         GetComponent<MeshRenderer>().material.color = color;
-           
     }
-
-   
 }

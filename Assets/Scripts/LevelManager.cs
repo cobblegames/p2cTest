@@ -32,13 +32,19 @@ public class LevelManager : MonoBehaviour, IInjectable
     {
         GameEvents.OnChangeGameState += Handle_GameStateChange;
         GameEvents.OnRestartGame += UnregisterEvents;
+        GameEvents.OnCaughtPenalty += Handle_CaughtPenalty;
     }
+
+  
 
     void UnregisterEvents()
     {
         GameEvents.OnChangeGameState -= Handle_GameStateChange;
+        GameEvents.OnCaughtPenalty -= Handle_CaughtPenalty;
         GameEvents.OnRestartGame -= UnregisterEvents;
     }
+
+
 
     public void Initialize(IInjectable[] _injectedElements)
     {
@@ -87,7 +93,16 @@ public class LevelManager : MonoBehaviour, IInjectable
                 break;
         }
     }
-
+    private void Handle_CaughtPenalty()
+    {
+        if(currentGameTime < gameDuration)
+        {
+            currentGameTime += 20f;
+            if (_hudManager != null)
+                _hudManager.UpdateGameUI();
+        }
+      
+    }
     public void CollectTheftObject(TheftObject theftObject)
     {
         if (theftObject != null && collectedObjects.Contains(theftObject))

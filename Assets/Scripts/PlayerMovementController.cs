@@ -88,7 +88,7 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
 
 
 
-    private void SetSpeedMultiplier(float multiplier)
+    public void SetSpeedMultiplier(float multiplier)
     {
         speedMultiplier = multiplier;
     }

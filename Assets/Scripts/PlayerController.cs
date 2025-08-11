@@ -7,16 +7,20 @@ public class PlayerController : MonoBehaviour, IInjectable
 
     [Header("Local dependencies")]
     [SerializeField] private InteractionController interactionController;
-
     [SerializeField] private PlayerMovementController _movement;
+    [SerializeField] private Transform carringReferencePoint;
+    [SerializeField] AudioSource gruntingSound;
+    [SerializeField] Camera _playerCamera;
+    public Camera PlayerCamera => _playerCamera;
+    public Transform CarryingPoint => carringReferencePoint;
 
+
+    [Header("Helper properties")]
     [SerializeField] private PlayerAlarmStatus playerStatus;
-    public PlayerAlarmStatus PlayerStatus => playerStatus;
     [SerializeField] private PlayerAction currentPlayerAction;
     public PlayerAction PlayerAction => currentPlayerAction;
 
-    [SerializeField] private Transform carringReferencePoint;
-    public Transform CarryingPoint => carringReferencePoint;
+ 
 
     private TheftObject currentTheftObject;
     public TheftObject CurrentTheftObject => currentTheftObject;
@@ -51,7 +55,12 @@ public class PlayerController : MonoBehaviour, IInjectable
             playerStatus = PlayerAlarmStatus.Detected;
             if (CurrentTheftObject != null)
             {
+                GameEvents.PostOnCaughtPenalty();
+                if (!gruntingSound.isPlaying)
+                    gruntingSound.Play();
+
                 CurrentTheftObject.Drop();
+              
             }
         }
         else
@@ -76,6 +85,7 @@ public class PlayerController : MonoBehaviour, IInjectable
     public void UnregisterTheftObject()
     {
         currentTheftObject = null;
+        _movement.SetSpeedMultiplier(1f);
     }
 
     public void RegisterTheftObject(TheftObject theftObject)
@@ -86,5 +96,6 @@ public class PlayerController : MonoBehaviour, IInjectable
             return;
         }
         currentTheftObject = theftObject;
+        _movement.SetSpeedMultiplier(0.5f);
     }
 }

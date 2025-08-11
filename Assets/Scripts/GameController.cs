@@ -5,6 +5,7 @@ public class GameController : MonoBehaviour, IInjectable
     [SerializeField] private GameState gameState = GameState.MainMenu;
     public GameState CurrentGameState => gameState;
 
+    [Header ("Injected Dependencies")]
     [SerializeField] private MainMenuUIController _mainMenuUIController;
     [SerializeField] private HUDMenuScreen _hudManager;
     [SerializeField] private PlayerController _player;
@@ -74,29 +75,34 @@ public class GameController : MonoBehaviour, IInjectable
     {
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
+        _player.PlayerCamera.gameObject.SetActive(false);
     }
 
     private void Handle_LostGame()
     {
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
+        _player.PlayerCamera.gameObject.SetActive(false);
     }
 
     private void Handle_MainMenu()
     {
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
+        _player.PlayerCamera.gameObject.SetActive(false);
     }
 
     private void Handle_InGame()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        _player.PlayerCamera.gameObject.SetActive(true);
     }
 
     private void Handle_RadialMenu()
     {
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
+        _player.PlayerCamera.gameObject.SetActive(true);
     }
 }
