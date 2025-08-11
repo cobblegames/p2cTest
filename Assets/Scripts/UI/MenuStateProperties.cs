@@ -58,6 +58,14 @@ public class MenuStateProperties
             }
         }
 
+        if(_menuObjectData.ChangePosition)
+        {
+            if (element.Rect)
+            {
+                element.StartCoroutine(element.ChangePosition(element.Rect, _menuObjectData.Position, _menuObjectData.Duration));
+            }
+        }
+
         for (int i = 0; i < _controlObjects.Length; i++)
         {
             if (_controlObjects[i].menuElement != null)

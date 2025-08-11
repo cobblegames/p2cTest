@@ -10,15 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73073e31ed59d6241abd85187c835389, type: 3}
-  m_Name: Shown_MenuState
+  m_Name: FirstRun_MenuState
   m_EditorClassIdentifier: 
-  stateTag: Shown
-  _canvasGroupAlpha: 1
+  _canvasGroupAlpha: 0
   _duration: 0.5
   _controlledImageColor: {r: 0, g: 0, b: 0, a: 0}
-  _fontColor: {r: 0, g: 0, b: 0, a: 0}
   _scale: {x: 0, y: 0, z: 0}
-  _changeCanvasGroupAlpha: 0
+  _position: {x: 0, y: 0}
+  _changeCanvasGroupAlpha: 1
   _changeControlledImageColor: 0
-  _changeFontColor: 0
   _changeScale: 0
+  _changePosition: 0

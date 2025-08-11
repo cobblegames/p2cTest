@@ -25,19 +25,9 @@ public class InterfaceDependencyInjector : MonoBehaviourSingleton<InterfaceDepen
     [SerializeField] MainMenuUIController mainMenuUIController;
     [SerializeField] HUDMenuScreen hudManager;
     [SerializeField] RadialMenu radialMenu;
-    private void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
+   
 
-
-
-    private void OnDisable()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
-    private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
+    private void Start()
     {
         InitializeInjectables();
     }
@@ -51,10 +41,13 @@ public class InterfaceDependencyInjector : MonoBehaviourSingleton<InterfaceDepen
         hudManager?.Initialize(new IInjectable[] { player, levelManager });
         player?.Initialize(new IInjectable[] { inputManager });
         movementController?.Initialize(new IInjectable[] { inputManager, player });
-        levelManager?.Initialize(new IInjectable[] { player, gameController });
+        levelManager?.Initialize(new IInjectable[] { hudManager});
         inputManager?.Initialize(new IInjectable[0]);
         mainMenuUIController.Initialize(new IInjectable[0]);
 
         Debug.Log("All injectables initialized successfully.");
+        
+        gameController.FirstRun();
+        
     }
 }

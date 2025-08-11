@@ -8,42 +8,42 @@ public class MainMenuUIController : MenuScreen, IInjectable
     [SerializeField] MenuElement startButton;
     [SerializeField] MenuElement exitGameButton;
   
-    void OnEnable()
-    {
-    
-    }
-    void OnDisable()
-    {
-    
-    }
+ 
    
     public void Initialize(IInjectable[] _injectedElements)
     {
-
-        if (startButton != null)
-        {
-         
-           
-            Debug.Log("Start Button Initialized");
-        }
-        if (exitGameButton != null)
-        {
-           
-            Debug.Log("Exit Game Button Initialized");
-        }
-
+        
     }
 
-    private void OnExitGameButtonClicked()
+
+    protected override void Handle_GameStateChange(GameState _gameState)
     {
-       Application.Quit();
+        base.Handle_GameStateChange(_gameState);
+
+        switch (_gameState)
+        {
+            case GameState.MainMenu:
+                SwitchMenuState(MenuScreenState.Shown);
+                break;
+
+            case GameState.InGame:
+                SwitchMenuState(MenuScreenState.Hidden);
+                break;
+
+            case GameState.Winning:
+                SwitchMenuState(MenuScreenState.Hidden);
+                break;
+
+            case GameState.Losing:
+                SwitchMenuState(MenuScreenState.Hidden);
+                break;
+
+            default:
+                Debug.LogWarning($"HUDMenuScreen: Unhandled game state {_gameState}");
+                break;
+        }
     }
 
-    private void OnStartButtonClicked()
-    {
-        Debug.Log("Starting Game...");
-        GameEvents.PostOnGameStart();
-    }
 
 }
 

@@ -3,12 +3,13 @@ using UnityEngine;
 
 public static class GameEvents 
 {
-    public static event System.Action OnRegisterInjectables;
-    public static void PostOnRegisterInjectables()
+    public static event System.Action<GameState> OnChangeGameState;
+    public static void PostOnChangeGameState(GameState _newState)
     {
-        if (OnRegisterInjectables != null)
-            OnRegisterInjectables();
+        if (OnChangeGameState != null)
+            OnChangeGameState(_newState);
     }
+
 
 
 
@@ -21,28 +22,6 @@ public static class GameEvents
 
 
     
-    public static event System.Action OnGameStart;
-    public static void PostOnGameStart()
-    {
-        if (OnGameStart != null)
-            OnGameStart();
-    }
-
-   
-
-    public static event System.Action OnGameWon;
-    public static void PostOnGameWon()
-    {
-        if (OnGameWon != null)
-            OnGameWon();
-    }
-
-    public static event System.Action OnGameLost;
-    public static void PostOnGameLost()
-    {
-        if (OnGameLost != null)
-            OnGameLost();
-    }
 
 
     public static event System.Action<PlayerAction> OnChangePlayerAction;

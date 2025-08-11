@@ -40,12 +40,38 @@ public class CameraDetectionSystem : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEvents.OnGameStart += HandleGameStart;
+        GameEvents.OnChangeGameState += HandleGameStateChange;
     }
+
+ 
 
     private void OnDisable()
     {
-        GameEvents.OnGameStart -= HandleGameStart;
+        GameEvents.OnChangeGameState -= HandleGameStateChange;
+    }
+
+
+    private void HandleGameStateChange(GameState _state)
+    {
+      switch(_state)
+        {
+            case GameState.MainMenu:
+                
+                break;
+    
+            case GameState.InGame:
+                HandleGameStart();
+                break;
+    
+            case GameState.Winning:
+            case GameState.Losing:
+                
+                break;
+    
+            default:
+                Debug.LogWarning($"CameraDetectionSystem: Unhandled game state {_state}");
+                break;
+        }
     }
 
     private void HandleGameStart()

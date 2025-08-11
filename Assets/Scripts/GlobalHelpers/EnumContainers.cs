@@ -42,5 +42,7 @@ public enum MenuScreenState
     Hidden = 1,
     Selected = 2,
     Deselected = 3,
-    Error = 4
+    Clicked = 4,
+    FirstRun = 5, // Sometimes we need to initialize the menu state
+    Error = 6
 }

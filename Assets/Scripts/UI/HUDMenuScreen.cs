@@ -2,34 +2,19 @@ using System;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+
 public class HUDMenuScreen : MenuScreen, IInjectable
 {
-    [Header ("References")]
+    [Header("References - Drag those in inspector")]
     [SerializeField] private TextMeshProUGUI playerStatusValue;
     [SerializeField] private TextMeshProUGUI scoreValue;
     [SerializeField] private TextMeshProUGUI timerValue;
 
+    [SerializeField] private Color detectedColor = Color.red;
+    [SerializeField] private Color safeColor = Color.green;
 
-
-    [SerializeField] Color detectedColor = Color.red;
-    [SerializeField] Color safeColor = Color.green;
-
-
-    PlayerController _player;
-    LevelManager _levelManager;
-
-    private void OnEnable()
-    {
-  
-
-    }
-
-   
-
-    private void OnDisable()
-    {
-  
-    }
+    private PlayerController _player;
+    private LevelManager _levelManager;
 
     public void Initialize(IInjectable[] _injectedElements)
     {
@@ -40,51 +25,47 @@ public class HUDMenuScreen : MenuScreen, IInjectable
             Debug.LogError("HUDMenuScreen: Failed to initialize dependencies.");
             return;
         }
-      
     }
 
-    void RegisterEvents()
+    protected override void Handle_GameStateChange(GameState _gameState)
     {
-     
+        base.Handle_GameStateChange(_gameState);
+
+        switch (_gameState)
+        {
+            case GameState.MainMenu:
+                SwitchMenuState(MenuScreenState.Hidden);
+                break;
+
+            case GameState.InGame:
+                SwitchMenuState(MenuScreenState.Shown);
+                break;
+
+            case GameState.Winning:
+                SwitchMenuState(MenuScreenState.Hidden);
+                break;
+
+            case GameState.Losing:
+                SwitchMenuState(MenuScreenState.Hidden);
+                break;
+
+            default:
+                Debug.LogWarning($"HUDMenuScreen: Unhandled game state {_gameState}");
+                break;
+        }
     }
-
-    void UnregisterEvents()
-    {
-     
-    }
-
-
-    void HandleStartGame()
-    {
-
-    }
-
-    void HandleWinGame()
-    {
-     
-    }
-
-    void HandleLoseGame()
-    {
-
-    }
-
 
     public void UpdateGameUI()
     {
         playerStatusValue.text = _player.PlayerStatus.ToString();
         if (_player.PlayerStatus == PlayerAlarmStatus.Detected)
         {
-          
         }
         else
         {
-          
         }
 
-        scoreValue.text = $"{_levelManager.CollectedTheftObjectsCount}/{_levelManager.TotalGameObjectsCount}";      
+        scoreValue.text = $"{_levelManager.CollectedTheftObjectsCount}/{_levelManager.TotalGameObjectsCount}";
         timerValue.text = $"{Mathf.FloorToInt(_levelManager.CurrentGameTime / 60)}:{Mathf.FloorToInt(_levelManager.CurrentGameTime % 60):00}";
     }
-
-   
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour, IInjectable
 {
-    private GameState gameState = GameState.MainMenu;
+    [SerializeField] private GameState gameState = GameState.MainMenu;
     public GameState CurrentGameState => gameState;
 
     [SerializeField] private MainMenuUIController _mainMenuUIController;
@@ -12,12 +12,12 @@ public class GameController : MonoBehaviour, IInjectable
 
     private void OnEnable()
     {
-       
+        GameEvents.OnChangeGameState -= ChangeGameState;
     }
 
     private void OnDisable()
     {
-       
+        GameEvents.OnChangeGameState -= ChangeGameState;
     }
 
     public void Initialize(IInjectable[] _injectedElements)
@@ -26,7 +26,19 @@ public class GameController : MonoBehaviour, IInjectable
         _hudManager = _injectedElements[1] as HUDMenuScreen;
         _player = _injectedElements[2] as PlayerController;
         _levelManager = _injectedElements[3] as LevelManager;
+
     }
 
+    public void FirstRun()
+    {
+        GameEvents.PostOnChangeGameState(GameState.MainMenu);
+    }
+
+
+    void ChangeGameState(GameState _gameState)
+    {
+       gameState = _gameState;
+
+    }
    
 }

@@ -1,8 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
+
 public class MenuElement : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 
 {
@@ -26,6 +26,7 @@ public class MenuElement : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 
         return null;
     }
+
 
     public void HandleMenuState(MenuScreenState menuState)
     {
@@ -52,7 +53,9 @@ public class MenuElement : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
             case MenuScreenState.Shown: Handle_OnShow(); break;
             case MenuScreenState.Hidden: Handle_OnHide(); break;
             case MenuScreenState.Selected: Handle_OnSelected(); break;
-                case MenuScreenState.Deselected: Handle_OnDeselected(); break;
+            case MenuScreenState.Deselected: Handle_OnDeselected(); break;
+            case MenuScreenState.Clicked: Handle_OnClick(); break;
+            case MenuScreenState.FirstRun: Handle_OnFirstRun(); break;
             default:
                 currentMenuState = MenuScreenState.Error;
                 Debug.LogError("State not found"); break;
@@ -73,8 +76,9 @@ public class MenuElement : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     protected virtual void Handle_OnHide(){}
     protected virtual void Handle_OnSelected(){}
     protected virtual void Handle_OnDeselected(){}
-
-
+    protected virtual void Handle_OnClick(){}
+    protected virtual void Handle_OnFirstRun(){}
+   
 
     public IEnumerator ChangeScale(RectTransform menuRect, Vector3 targetScale, float duration)
     {
@@ -117,18 +121,36 @@ public class MenuElement : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
         GameEvents.PostOnFinishMenuTransition();
     }
 
+    public IEnumerator ChangePosition(RectTransform menuRect, Vector2 targetPosition, float duration)
+    {
+        Vector2 initialPosition = menuRect.anchoredPosition;
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            menuRect.anchoredPosition = Vector2.Lerp(initialPosition, targetPosition, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        menuRect.anchoredPosition = targetPosition;
+        GameEvents.PostOnFinishMenuTransition();
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
-        
+        Debug.Log("Menu Element Clicked: " + gameObject.name);
+        HandleMenuState(MenuScreenState.Clicked);
+
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        Debug.Log("Pointer entered: " + gameObject.name);
         HandleMenuState(MenuScreenState.Selected);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        Debug.Log("Pointer exited: " + gameObject.name);
         HandleMenuState(MenuScreenState.Deselected);
     }
 }

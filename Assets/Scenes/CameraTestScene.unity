@@ -327,8 +327,8 @@ GameObject:
   - component: {fileID: 57753638}
   - component: {fileID: 57753637}
   - component: {fileID: 57753639}
-  - component: {fileID: 57753640}
   - component: {fileID: 57753641}
+  - component: {fileID: 57753642}
   m_Layer: 5
   m_Name: StartButton
   m_TagString: Untagged
@@ -414,27 +414,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &57753640
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 57753634}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6e74201707fbd540b0b8d757b1de32b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _menuStateProperties:
-  - stateTag: Deselected
-    _state: 3
-    _menuObjectData: {fileID: 11400000, guid: 4352416f986f1e6429875c15ef390e66, type: 2}
-    _controlObjects: []
-  currentMenuState: 1
-  rect: {fileID: 57753635}
-  controlImage: {fileID: 57753637}
-  canvasGroup: {fileID: 57753641}
 --- !u!225 &57753641
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -445,8 +424,41 @@ CanvasGroup:
   m_Enabled: 1
   m_Alpha: 1
   m_Interactable: 0
-  m_BlocksRaycasts: 0
-  m_IgnoreParentGroups: 0
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 1
+--- !u!114 &57753642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 57753634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58cbb903987d94b4d869c8bf9a8aed1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _menuStateProperties:
+  - stateTag: Deselected
+    _state: 3
+    _menuObjectData: {fileID: 11400000, guid: 4352416f986f1e6429875c15ef390e66, type: 2}
+    _controlObjects: []
+  - stateTag: Selected
+    _state: 2
+    _menuObjectData: {fileID: 11400000, guid: 6cc9dadf6b0566c4e94e35b230b3ca01, type: 2}
+    _controlObjects: []
+  - stateTag: Shown
+    _state: 0
+    _menuObjectData: {fileID: 11400000, guid: edd5e643f7a35c74f8ebdc71569aa952, type: 2}
+    _controlObjects: []
+  - stateTag: Hidden
+    _state: 1
+    _menuObjectData: {fileID: 11400000, guid: 2779edc6b34dc3446a8b68322bb870fc, type: 2}
+    _controlObjects: []
+  currentMenuState: 1
+  rect: {fileID: 57753635}
+  controlImage: {fileID: 57753637}
+  canvasGroup: {fileID: 57753641}
 --- !u!1 &59633543
 GameObject:
   m_ObjectHideFlags: 0
@@ -8490,6 +8502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54053409a9f98854ea4772e41ced4a0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameState: 0
   _mainMenuUIController: {fileID: 0}
   _hudManager: {fileID: 0}
   _player: {fileID: 0}
@@ -8636,11 +8649,11 @@ RectTransform:
   - {fileID: 60985523}
   m_Father: {fileID: 2070456876}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 500, y: 0}
+  m_SizeDelta: {x: 1600, y: 900}
+  m_Pivot: {x: 1, y: 1}
 --- !u!114 &1348316252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8657,17 +8670,33 @@ MonoBehaviour:
   - stateTag: Shown
     _state: 0
     _menuObjectData: {fileID: 11400000, guid: d1de01ebb72fd3845b617e330d2bd4f5, type: 2}
-    _controlObjects: []
+    _controlObjects:
+    - menuElement: {fileID: 1407934920}
+      menuElementSetState: 0
+    - menuElement: {fileID: 57753642}
+      menuElementSetState: 0
   - stateTag: Hidden
     _state: 1
     _menuObjectData: {fileID: 11400000, guid: faeb452014dfd5945a380c48a6c0747e, type: 2}
-    _controlObjects: []
-  currentMenuState: 0
+    _controlObjects:
+    - menuElement: {fileID: 1407934920}
+      menuElementSetState: 1
+    - menuElement: {fileID: 57753642}
+      menuElementSetState: 1
+  - stateTag: FirstRun
+    _state: 5
+    _menuObjectData: {fileID: 11400000, guid: faeb452014dfd5945a380c48a6c0747e, type: 2}
+    _controlObjects:
+    - menuElement: {fileID: 1407934920}
+      menuElementSetState: 5
+    - menuElement: {fileID: 57753642}
+      menuElementSetState: 5
+  currentMenuState: 5
   rect: {fileID: 1348316251}
   controlImage: {fileID: 60985524}
   canvasGroup: {fileID: 1348316253}
-  startButton: {fileID: 0}
-  exitGameButton: {fileID: 0}
+  startButton: {fileID: 57753642}
+  exitGameButton: {fileID: 1407934920}
 --- !u!225 &1348316253
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -8677,9 +8706,9 @@ CanvasGroup:
   m_GameObject: {fileID: 1348316250}
   m_Enabled: 1
   m_Alpha: 1
-  m_Interactable: 1
+  m_Interactable: 0
   m_BlocksRaycasts: 0
-  m_IgnoreParentGroups: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &1399453408
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8789,9 +8818,8 @@ GameObject:
   - component: {fileID: 1407934919}
   - component: {fileID: 1407934918}
   - component: {fileID: 1407934916}
-  - component: {fileID: 1407934915}
   - component: {fileID: 1407934914}
-  - component: {fileID: 1407934913}
+  - component: {fileID: 1407934920}
   m_Layer: 5
   m_Name: QuitButton
   m_TagString: Untagged
@@ -8819,51 +8847,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1407934913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1407934911}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 0
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1407934915}
-          m_TargetAssemblyTypeName: MenuElement, Assembly-CSharp
-          m_MethodName: Select
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-  - eventID: 2
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1407934915}
-          m_TargetAssemblyTypeName: MenuElement, Assembly-CSharp
-          m_MethodName: Deselect
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
 --- !u!225 &1407934914
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -8873,30 +8856,9 @@ CanvasGroup:
   m_GameObject: {fileID: 1407934911}
   m_Enabled: 1
   m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 0
-  m_IgnoreParentGroups: 0
---- !u!114 &1407934915
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1407934911}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6e74201707fbd540b0b8d757b1de32b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _menuStateProperties:
-  - stateTag: Deselected
-    _state: 3
-    _menuObjectData: {fileID: 11400000, guid: 4352416f986f1e6429875c15ef390e66, type: 2}
-    _controlObjects: []
-  currentMenuState: 1
-  rect: {fileID: 1407934912}
-  controlImage: {fileID: 1407934918}
-  canvasGroup: {fileID: 1407934914}
+  m_Interactable: 0
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 1
 --- !u!114 &1407934916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8955,6 +8917,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1407934911}
   m_CullTransparentMesh: 1
+--- !u!114 &1407934920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1407934911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2728a5172bfdd74985c98b4ca0d0407, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _menuStateProperties:
+  - stateTag: Deselected
+    _state: 3
+    _menuObjectData: {fileID: 11400000, guid: 4352416f986f1e6429875c15ef390e66, type: 2}
+    _controlObjects: []
+  - stateTag: Selected
+    _state: 2
+    _menuObjectData: {fileID: 11400000, guid: 6cc9dadf6b0566c4e94e35b230b3ca01, type: 2}
+    _controlObjects: []
+  - stateTag: Shown
+    _state: 0
+    _menuObjectData: {fileID: 11400000, guid: edd5e643f7a35c74f8ebdc71569aa952, type: 2}
+    _controlObjects: []
+  - stateTag: Hidden
+    _state: 1
+    _menuObjectData: {fileID: 11400000, guid: 2779edc6b34dc3446a8b68322bb870fc, type: 2}
+    _controlObjects: []
+  currentMenuState: 1
+  rect: {fileID: 1407934912}
+  controlImage: {fileID: 1407934918}
+  canvasGroup: {fileID: 1407934914}
 --- !u!1 &1498247975
 GameObject:
   m_ObjectHideFlags: 0
@@ -10055,41 +10050,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1680556396}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1683358006
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1683358007}
-  m_Layer: 5
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1683358007
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1683358006}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2070456876}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!4 &1685514922 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3883324086658722346, guid: c01c6a88219460349931cc64952f182a, type: 3}
@@ -11661,7 +11621,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 32
 --- !u!114 &2070456874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11722,7 +11682,6 @@ RectTransform:
   m_Children:
   - {fileID: 1348316251}
   - {fileID: 2101701650}
-  - {fileID: 1683358007}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -11765,11 +11724,11 @@ RectTransform:
   - {fileID: 568567514}
   m_Father: {fileID: 2070456876}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_SizeDelta: {x: 1600, y: 901}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2101701651
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11785,11 +11744,15 @@ MonoBehaviour:
   _menuStateProperties:
   - stateTag: Shown
     _state: 0
-    _menuObjectData: {fileID: 11400000, guid: d1de01ebb72fd3845b617e330d2bd4f5, type: 2}
+    _menuObjectData: {fileID: 11400000, guid: 513faa8ad74bd8e468562a9d479093a9, type: 2}
     _controlObjects: []
   - stateTag: Hidden
     _state: 0
-    _menuObjectData: {fileID: 11400000, guid: faeb452014dfd5945a380c48a6c0747e, type: 2}
+    _menuObjectData: {fileID: 11400000, guid: ca85a20658a91a14fa254313708008a3, type: 2}
+    _controlObjects: []
+  - stateTag: FirstRun
+    _state: 5
+    _menuObjectData: {fileID: 11400000, guid: 08b90f381dbc75b4db8cb6e51cb53e82, type: 2}
     _controlObjects: []
   currentMenuState: 1
   rect: {fileID: 2101701650}

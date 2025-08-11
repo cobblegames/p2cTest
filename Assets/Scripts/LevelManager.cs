@@ -6,7 +6,7 @@
 
 using UnityEngine;
 using System.Collections;
-using NUnit.Framework;
+
 
 public class LevelManager : MonoBehaviour, IInjectable
 {
@@ -27,35 +27,60 @@ public class LevelManager : MonoBehaviour, IInjectable
 
     private void OnEnable()
     {
-    
+        GameEvents.OnChangeGameState += Handle_GameStateChange;
     }
+
+  
 
     private void OnDisable()
     {
-    
-        UnregisterEvents();
+
+        GameEvents.OnChangeGameState -= Handle_GameStateChange;
     }
 
  
     public void Initialize(IInjectable[] _injectedElements)
     {
         _hudManager = _injectedElements[0] as HUDMenuScreen;
-
-        RegisterEvents();
     }
 
-    private void RegisterEvents()
+
+    private void Handle_GameStateChange(GameState _gameState)
     {
-        GameEvents.OnGameStart += Handle_StartGame;
-        GameEvents.OnGameLost += Handle_LostGame;
-        GameEvents.OnGameWon += Handle_WinGame;
+        switch(_gameState)
+        {
+            case GameState.MainMenu:
+                Handle_MainMenu();
+
+
+                break;
+            case GameState.InGame:
+
+                Handle_StartGame();
+            break;
+
+            case GameState.Winning:
+            Handle_WinGame();
+            break;
+            case GameState.Losing:
+            Handle_LostGame();
+            break;
+                default:
+                Debug.LogWarning($"LevelManager: Unhandled game state {_gameState}");
+                break;
+
+        }    
     }
 
-    private void UnregisterEvents()
+    private void Handle_MainMenu()
     {
-        GameEvents.OnGameStart -= Handle_StartGame;
-        GameEvents.OnGameLost -= Handle_LostGame;
-        GameEvents.OnGameWon -= Handle_WinGame;
+        if (timer != null)
+            StopCoroutine(timer);
+
+
+        currentGameTime = 0f;
+        if(_hudManager != null)
+             _hudManager.UpdateGameUI();
     }
 
     private void Handle_LostGame()
@@ -83,6 +108,6 @@ public class LevelManager : MonoBehaviour, IInjectable
             yield return new WaitForSeconds(1f);
         }
         Debug.Log("Game Over! Time's up!");
-        GameEvents.PostOnGameLost();
+      
     }
 }

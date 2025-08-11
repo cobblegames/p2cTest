@@ -24,11 +24,6 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
     InputManager _inputManager;
 
 
-    private void OnEnable()
-    {
-
-    }
-
     private void OnDisable()
     {
       
@@ -56,12 +51,12 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
         _inputManager.OnShowRadialMenu += () => lockMovement = true;
         _inputManager.OnHideRadialMenu += () => lockMovement = false;
 
-        GameEvents.OnGameStart += HandleStartGame;
+        GameEvents.OnChangeGameState += Handle_ChangeGameState;
         GameEvents.OnChangePlayerAction += Handle_ChangePlayerAction;
 
     }
 
- 
+  
 
     private void UnregisterEvents()
     {
@@ -71,11 +66,14 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
         _inputManager.OnShowRadialMenu -= () => lockMovement = true;
         _inputManager.OnHideRadialMenu -= () => lockMovement = false;
 
-        GameEvents.OnGameStart -= HandleStartGame;
+      
         GameEvents.OnChangePlayerAction -= Handle_ChangePlayerAction;
     }
 
-
+    private void Handle_ChangeGameState(GameState state)
+    {
+        
+    }
     private void Handle_ChangePlayerAction(PlayerAction action)
     {
         
