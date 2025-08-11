@@ -1,7 +1,7 @@
-using System;
+
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Windows;
+
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovementController : MonoBehaviour, IInjectable
@@ -114,8 +114,11 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
     private void Handle_StartGame()
     {
         lockMovement = false; // Lock movement when winning or losing
-        gameIsStarted = true;
-        StartCoroutine(MovementCorutine()); 
+        if(!gameIsStarted)
+        {
+            gameIsStarted = true;
+            StartCoroutine(MovementCorutine());
+        }   
     }
 
     private void Handle_LostGame()

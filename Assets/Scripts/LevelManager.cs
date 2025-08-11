@@ -6,6 +6,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 
 public class LevelManager : MonoBehaviour, IInjectable
@@ -16,7 +17,7 @@ public class LevelManager : MonoBehaviour, IInjectable
     private int totalGameObjectsCount = 0;
 
     [SerializeField] private float gameDuration = 300f; // Game duration in seconds
-    private float currentGameTime = 0f;
+    [SerializeField] private float currentGameTime = 0f;
 
     public int TotalGameObjectsCount => totalGameObjectsCount;
     public int CollectedTheftObjectsCount => collectedTheftObjectsCount;
@@ -24,6 +25,8 @@ public class LevelManager : MonoBehaviour, IInjectable
     public float CurrentGameTime => gameDuration - currentGameTime;
 
     private Coroutine timer;
+
+    List<TheftObject> collectedObjects = new List<TheftObject>();
 
     private void OnEnable()
     {
@@ -42,6 +45,21 @@ public class LevelManager : MonoBehaviour, IInjectable
     public void Initialize(IInjectable[] _injectedElements)
     {
         _hudManager = _injectedElements[0] as HUDMenuScreen;
+
+        collectedObjects.AddRange(Object.FindObjectsByType<TheftObject>(FindObjectsSortMode.None));
+
+        for (int i = 0; i < collectedObjects.Count; i++)
+        {
+            if (collectedObjects[i] != null)
+            {
+                totalGameObjectsCount++;
+                collectedObjects[i].Initialize(new IInjectable[] { this });
+            }
+            else
+            {
+                Debug.LogWarning("LevelManager: Found a null TheftObject in the scene.");
+            }
+        }
     }
 
 
@@ -51,8 +69,6 @@ public class LevelManager : MonoBehaviour, IInjectable
         {
             case GameState.MainMenu:
                 Handle_MainMenu();
-
-
                 break;
             case GameState.InGame:
 
@@ -65,11 +81,32 @@ public class LevelManager : MonoBehaviour, IInjectable
             case GameState.Losing:
             Handle_LostGame();
             break;
-                default:
+
+            default:
                 Debug.LogWarning($"LevelManager: Unhandled game state {_gameState}");
                 break;
 
         }    
+    }
+
+    public void CollectTheftObject(TheftObject theftObject)
+    {
+        if (theftObject != null && collectedObjects.Contains(theftObject))
+        {
+            collectedObjects.Remove(theftObject);
+            collectedTheftObjectsCount++;
+            Debug.Log($"Collected object: {theftObject.name}. Total collected: {collectedTheftObjectsCount}/{totalGameObjectsCount}");
+            if (_hudManager != null)
+                _hudManager.UpdateGameUI();
+            if (collectedTheftObjectsCount >= totalGameObjectsCount)
+            {
+                GameEvents.PostOnChangeGameState(GameState.Winning);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Attempted to collect a null or already collected TheftObject.");
+        }
     }
 
     private void Handle_MainMenu()
@@ -86,16 +123,19 @@ public class LevelManager : MonoBehaviour, IInjectable
     private void Handle_LostGame()
     {
         StopCoroutine(timer);
+        timer  = null;
     }
 
     private void Handle_WinGame()
     {
         StopCoroutine(timer);
+        timer = null;
     }
 
     private void Handle_StartGame()
     {
-        timer = StartCoroutine(GameTimer());
+        if(timer == null)
+             timer = StartCoroutine(GameTimer());
     }
 
     private IEnumerator GameTimer()

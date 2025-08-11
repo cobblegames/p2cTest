@@ -12,16 +12,7 @@ public class TheftObject : MonoBehaviour, IInteractable, IInjectable
     PlayerController _player;
     LevelManager _levelManager;
 
-    void OnEnable()
-    {
-     
-    }
-
-    void OnDisable()
-    {
-      
-    }
-
+    
     public void Initialize(IInjectable[] _injectedElements)
     {
         _levelManager = _injectedElements[0] as LevelManager;
@@ -122,6 +113,7 @@ public class TheftObject : MonoBehaviour, IInteractable, IInjectable
     {
         if (_player != null)
         {
+            _levelManager.CollectTheftObject(this);
             _player.UnregisterTheftObject();
             _player = null;
             ChangeStatus(ObjectStatus.Safe);

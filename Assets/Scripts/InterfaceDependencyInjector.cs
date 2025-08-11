@@ -38,7 +38,7 @@ public class InterfaceDependencyInjector : MonoBehaviourSingleton<InterfaceDepen
     void InitializeInjectables()
     {
         gameController?.Initialize(new IInjectable[] { mainMenuUIController, hudManager, player, levelManager });
-        hudManager?.Initialize(new IInjectable[] { player, levelManager });
+        hudManager?.Initialize(new IInjectable[] { levelManager });
         player?.Initialize(new IInjectable[] { inputManager });
         movementController?.Initialize(new IInjectable[] { inputManager, player });
         levelManager?.Initialize(new IInjectable[] { hudManager});

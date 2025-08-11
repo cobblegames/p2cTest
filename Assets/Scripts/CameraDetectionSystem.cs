@@ -22,6 +22,7 @@ public class CameraDetectionSystem : MonoBehaviour
 
     [SerializeField] private AudioSource audioSource;
     private bool gameIsStarted = false;
+    private bool gameisPaused = false;
 
     private Coroutine cameraMainLoop;
 
@@ -60,6 +61,7 @@ public class CameraDetectionSystem : MonoBehaviour
                 break;
     
             case GameState.InGame:
+                gameisPaused = false;
                 HandleGameStart();
                 break;
     
@@ -67,7 +69,11 @@ public class CameraDetectionSystem : MonoBehaviour
             case GameState.Losing:
                 
                 break;
-    
+
+            case GameState.RadialMenu:
+            gameisPaused = true;
+            break;
+
             default:
                 Debug.LogWarning($"CameraDetectionSystem: Unhandled game state {_state}");
                 break;
@@ -76,16 +82,24 @@ public class CameraDetectionSystem : MonoBehaviour
 
     private void HandleGameStart()
     {
-        gameIsStarted = true;
-        cameraMainLoop = StartCoroutine(CameraMainLoop());
+        if(!gameIsStarted)
+        {
+            gameIsStarted = true;
+            cameraMainLoop = StartCoroutine(CameraMainLoop());
+        }
+        
     }
 
     private IEnumerator CameraMainLoop()
     {
         while (gameIsStarted)
         {
-            RotateCamera();
-            CheckForPlayer();
+            if(!gameisPaused)
+            {
+                RotateCamera();
+                CheckForPlayer();
+            }
+           
 
             yield return new WaitForEndOfFrame();
         }
