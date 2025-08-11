@@ -33,6 +33,7 @@ public enum GameState
     InGame = 1,
     Winning = 2,
     Losing = 3,
+    RadialMenu = 4,
 }
 
 [System.Serializable]

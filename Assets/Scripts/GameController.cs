@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class GameController : MonoBehaviour, IInjectable
@@ -39,6 +40,45 @@ public class GameController : MonoBehaviour, IInjectable
     {
        gameState = _gameState;
 
+        switch(gameState)
+        {
+            case GameState.MainMenu:
+                Handle_MainMenu();
+                break;
+            case GameState.InGame:
+                Handle_InGame();
+                break;
+            case GameState.Winning:
+                // Handle winning state
+                break;
+            case GameState.Losing:
+                // Handle losing state
+                break;
+            case GameState.RadialMenu:
+                Handle_RadialMenu();
+                break;
+            default:
+                Debug.LogWarning($"Unhandled game state: {gameState}");
+                break;
+        }
+
     }
-   
+
+    private void Handle_MainMenu()
+    {
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+    }
+
+    void Handle_InGame()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    void Handle_RadialMenu()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
 }

@@ -45,7 +45,7 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
 
     private void RegisterEvents()
     {
-        _inputManager.OnLook += HandleLook;
+        _inputManager.OnLook += Handle_LookEvent;
         _inputManager.OnMove += HandleMovement;
         _inputManager.OnJump += HandleJump;
         _inputManager.OnShowRadialMenu += () => lockMovement = true;
@@ -60,7 +60,7 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
 
     private void UnregisterEvents()
     {
-        _inputManager.OnLook -= HandleLook;
+        _inputManager.OnLook -= Handle_LookEvent;
         _inputManager.OnMove -= HandleMovement;
         _inputManager.OnJump -= HandleJump;
         _inputManager.OnShowRadialMenu -= () => lockMovement = true;
@@ -72,7 +72,26 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
 
     private void Handle_ChangeGameState(GameState state)
     {
-        
+        switch (state)
+        {
+            case GameState.MainMenu:
+                Handle_MainMenu();
+                break;
+            case GameState.InGame:
+                Handle_StartGame();
+                break;
+            case GameState.Winning:
+                Handle_WinGame();
+                break;
+            case GameState.Losing:
+                Handle_LostGame();
+
+
+                break;
+            default:
+                Debug.LogWarning($"Unhandled game state: {state}");
+                break;
+        }
     }
     private void Handle_ChangePlayerAction(PlayerAction action)
     {
@@ -84,16 +103,36 @@ public class PlayerMovementController : MonoBehaviour, IInjectable
         speedMultiplier = multiplier;
     }
 
-    private void HandleStartGame()
+    void Handle_MainMenu()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        gameIsStarted = true;
-        lockMovement = false; // Unlock movement when the game starts
-        StartCoroutine(MovementCorutine());
+        lockMovement = true; // Lock movement in the main menu
+        gameIsStarted = false;
+        StopAllCoroutines(); // Stop any ongoing movement coroutine
+        // Maybe later reset player position or camera rotation?
     }
 
-    private void HandleLook(Vector2 _input)
+    private void Handle_StartGame()
+    {
+        lockMovement = false; // Lock movement when winning or losing
+        gameIsStarted = true;
+        StartCoroutine(MovementCorutine()); 
+    }
+
+    private void Handle_LostGame()
+    {
+        lockMovement = true; // Lock movement when winning
+        gameIsStarted = false;
+        StopAllCoroutines(); // Stop any ongoing movement coroutine
+    }
+
+    private void Handle_WinGame()
+    {
+        lockMovement = true; // Lock movement when winning
+        gameIsStarted = false;
+        StopAllCoroutines(); // Stop any ongoing movement coroutine
+    }
+
+    private void Handle_LookEvent(Vector2 _input)
     {
         if (lockMovement)
             return;

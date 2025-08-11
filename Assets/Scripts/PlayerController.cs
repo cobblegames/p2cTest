@@ -23,10 +23,7 @@ public class PlayerController : MonoBehaviour, IInjectable
     private TheftObject currentTheftObject;
     public TheftObject CurrentTheftObject => currentTheftObject;
 
-    private void OnEnable()
-    {
-       
-    }
+   
 
     private void OnDisable()
     {

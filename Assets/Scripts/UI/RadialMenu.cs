@@ -155,11 +155,11 @@ public class RadialMenu : MonoBehaviour, IInjectable
 
     private void ActivateMenu()
     {
+      
         Debug.Log("Activating Radial Menu");
         isActive = true;
         menuRoot.SetActive(true);
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
+        GameEvents.PostOnChangeGameState(GameState.RadialMenu);
     }
 
     private void ExecuteAction()
@@ -176,11 +176,12 @@ public class RadialMenu : MonoBehaviour, IInjectable
         ExecuteAction();
         isActive = false;
         menuRoot.SetActive(false);
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.None;
+
         currentSelection = -1;
         UpdateSelectionDisplay();
-       
+
+        GameEvents.PostOnChangeGameState(GameState.InGame);
+
     }
 
     private void HandleSelection(Vector2 cursorPosition)

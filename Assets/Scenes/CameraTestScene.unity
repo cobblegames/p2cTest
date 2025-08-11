@@ -7536,7 +7536,7 @@ GameObject:
   - component: {fileID: 1174229953}
   - component: {fileID: 1174229952}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: RadualMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11756,8 +11756,8 @@ MonoBehaviour:
     _controlObjects: []
   currentMenuState: 1
   rect: {fileID: 2101701650}
-  controlImage: {fileID: 0}
-  canvasGroup: {fileID: 0}
+  controlImage: {fileID: 568567515}
+  canvasGroup: {fileID: 2101701652}
   playerStatusValue: {fileID: 274025361}
   scoreValue: {fileID: 179057874}
   timerValue: {fileID: 1304003020}
