@@ -8,7 +8,7 @@ public class DoorsObject : MonoBehaviour, IInteractable
     [SerializeField] private Transform doorTransform;
     [SerializeField] private Transform closedPoint;
     [SerializeField] private Transform openPoint;
-
+    [SerializeField] AudioSource doorSource;
     private void OnEnable()
     {
         GameEvents.OnPlayerDetected += Handle_PlayerDetectedState;
@@ -45,7 +45,8 @@ public class DoorsObject : MonoBehaviour, IInteractable
     {
         Vector3 startPosition = doorTransform.position;
         float elapsedTime = 0f;
-
+        if(!doorSource.isPlaying)
+            doorSource.Play();
         while (elapsedTime < duration)
         {
             doorTransform.position = Vector3.Lerp(startPosition, targetPosition.position, elapsedTime / duration);
