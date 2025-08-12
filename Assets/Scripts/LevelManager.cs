@@ -98,7 +98,7 @@ public class LevelManager : MonoBehaviour, IInjectable
         if(currentGameTime < gameDuration)
         {
             currentGameTime += 20f;
-            if (currentGameTime > gameDuration)
+            if (currentGameTime >= gameDuration)
             {
                 GameEvents.PostOnChangeGameState(GameState.Losing);
                 currentGameTime = gameDuration;

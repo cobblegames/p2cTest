@@ -26,6 +26,10 @@ public class DoorsObject : MonoBehaviour, IInteractable
         if (player.PlayerAction == assignedAction)
         {
             Transform targetPosition = doorStatus == DoorStatus.Closed ? openPoint : closedPoint;
+
+            if (!doorSource.isPlaying)
+                doorSource.Play();
+
             StartCoroutine(MoveDoor(targetPosition, 2f));
         }
 
@@ -45,8 +49,7 @@ public class DoorsObject : MonoBehaviour, IInteractable
     {
         Vector3 startPosition = doorTransform.position;
         float elapsedTime = 0f;
-        if(!doorSource.isPlaying)
-            doorSource.Play();
+       
         while (elapsedTime < duration)
         {
             doorTransform.position = Vector3.Lerp(startPosition, targetPosition.position, elapsedTime / duration);
